@@ -1,12 +1,29 @@
+/*
+ * Copyright (c) 2019, Egeniq
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.egeniq.androidtvprogramguide
 
+import android.util.Log
 import androidx.annotation.MainThread
 import com.egeniq.androidtvprogramguide.entity.ProgramGuideChannel
 import com.egeniq.androidtvprogramguide.entity.ProgramGuideSchedule
 import com.egeniq.androidtvprogramguide.util.FixedZonedDateTime
 import org.threeten.bp.LocalDate
 import org.threeten.bp.ZoneOffset
-import timber.log.Timber
+import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.max
 
@@ -23,7 +40,8 @@ class ProgramGuideManager<T> {
 
         private const val DAY_STARTS_AT_HOUR = 5
         private const val DAY_ENDS_NEXT_DAY_AT_HOUR = 6
-        var DISPLAY_TIMEZONE: ZoneOffset = ZoneOffset.UTC
+
+        private val TAG : String = ProgramGuideManager::class.java.name
     }
 
 
@@ -61,7 +79,7 @@ class ProgramGuideManager<T> {
     }
 
 
-    private fun updateChannelsTimeRange(selectedDate: LocalDate) {
+    private fun updateChannelsTimeRange(selectedDate: LocalDate, timeZone: ZoneOffset) {
         val viewPortWidth = toUtcMillis - fromUtcMillis
         var newStartMillis: Long? = null
         var newEndMillis: Long? = null
@@ -95,7 +113,7 @@ class ProgramGuideManager<T> {
                     entries.add(ProgramGuideSchedule.createGap(startUtcMillis, endUtcMillis))
                 } else {
                     // Cut off items which don't belong in the desired timeframe
-                    val timelineStartsAt = selectedDate.atStartOfDay(DISPLAY_TIMEZONE).withHour(DAY_STARTS_AT_HOUR)
+                    val timelineStartsAt = selectedDate.atStartOfDay(timeZone).withHour(DAY_STARTS_AT_HOUR)
                     val timelineEndsAt = timelineStartsAt.plusDays(1).withHour(DAY_ENDS_NEXT_DAY_AT_HOUR)
 
                     val timelineStartsAtMillis = timelineStartsAt.toEpochSecond() * 1_000
@@ -170,18 +188,18 @@ class ProgramGuideManager<T> {
                         val currentDuration = current.endsAtMillis - (current.startsAtMillis + millisToAddToNextStart)
                         val hasNext = shortIterator.hasNext()
                         if (!hasNext && (millisToAddToNextStart > 0 || currentDuration < ENTRY_MIN_DURATION)) {
-                            Timber.i("The last schedule (${current.program}) has been extended because it was too short.")
+                            Log.i(TAG, "The last schedule (${current.program}) has been extended because it was too short.")
                             val replacingSchedule = current.copy(startsAtMillis = current.startsAtMillis + millisToAddToNextStart,
                                     endsAtMillis = max(current.startsAtMillis + ENTRY_MIN_DURATION, current.endsAtMillis))
                             shortIterator.set(replacingSchedule)
                         } else if (currentDuration < ENTRY_MIN_DURATION) {
-                            Timber.i("The schedule ${current.program} has been extended because it was too short.")
+                            Log.i(TAG, "The schedule ${current.program} has been extended because it was too short.")
                             val replacingSchedule = current.copy(startsAtMillis = current.startsAtMillis + millisToAddToNextStart,
                                     endsAtMillis = current.startsAtMillis + millisToAddToNextStart + ENTRY_MIN_DURATION)
                             shortIterator.set(replacingSchedule)
                             millisToAddToNextStart = replacingSchedule.endsAtMillis - current.endsAtMillis
                         } else if (millisToAddToNextStart > 0) {
-                            Timber.i("The schedule ${current.program} has been shortened because the previous schedule had to be extended.")
+                            Log.i(TAG, "The schedule ${current.program} has been shortened because the previous schedule had to be extended.")
                             val replacingSchedule = current.copy(startsAtMillis = current.startsAtMillis + millisToAddToNextStart)
                             shortIterator.set(replacingSchedule)
                             millisToAddToNextStart = 0
@@ -305,14 +323,14 @@ class ProgramGuideManager<T> {
     }
 
     @MainThread
-    fun setData(newChannels: List<ProgramGuideChannel>, newChannelEntries: Map<String, List<ProgramGuideSchedule<T>>>, selectedDate: LocalDate) {
+    fun setData(newChannels: List<ProgramGuideChannel>, newChannelEntries: Map<String, List<ProgramGuideSchedule<T>>>, selectedDate: LocalDate, timeZone: ZoneOffset) {
         channels.clear()
         channelEntriesMap.clear()
 
         channels.addAll(newChannels)
         channelEntriesMap.putAll(newChannelEntries)
 
-        updateChannelsTimeRange(selectedDate)
+        updateChannelsTimeRange(selectedDate, timeZone)
         notifySchedulesUpdated()
     }
 

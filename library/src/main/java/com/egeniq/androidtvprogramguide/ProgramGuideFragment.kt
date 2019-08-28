@@ -1,9 +1,26 @@
+/*
+ * Copyright (c) 2019, Egeniq
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.egeniq.androidtvprogramguide
 
 import android.annotation.SuppressLint
 import android.content.res.Resources
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,9 +48,9 @@ import com.egeniq.androidtvprogramguide.util.FixedZonedDateTime
 import com.egeniq.androidtvprogramguide.util.ProgramGuideUtil
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
+import org.threeten.bp.ZoneOffset
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.temporal.ChronoUnit
-import timber.log.Timber
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
@@ -49,7 +66,6 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         // or equal to ProgramManager.ENTRY_MIN_DURATION.
         private val MIN_DURATION_FROM_START_TIME_TO_CURRENT_TIME = ProgramGuideManager.ENTRY_MIN_DURATION
 
-        private val DATE_WITH_DAY_FORMATTER = DateTimeFormatter.ofPattern("EEE d MMM").withLocale(Locale("nl", "nl"))
         private val FILTER_DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE
 
         private val TIME_INDICATOR_UPDATE_INTERVAL = TimeUnit.SECONDS.toMillis(5)
@@ -61,12 +77,19 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         private const val MORNING_STARTS_AT_HOUR = 6
         private const val MORNING_UNTIL_HOUR = 12
         private const val AFTERNOON_UNTIL_HOUR = 19
+
+        private val TAG : String = ProgramGuideFragment::class.java.name
     }
 
     // Config values, override in subclass if necessary
+    protected open val DISPLAY_LOCALE = Locale("en", "US")
+    protected open val DISPLAY_TIMEZONE: ZoneOffset = ZoneOffset.UTC
     protected open val SELECTABLE_DAYS_IN_PAST = 7
     protected open val SELECTABLE_DAYS_IN_FUTURE = 7
     protected open val USE_HUMAN_DATES = true
+    @Suppress("LeakingThis")
+    protected open val DATE_WITH_DAY_FORMATTER = DateTimeFormatter.ofPattern("EEE d MMM").withLocale(DISPLAY_LOCALE)
+
 
     private var selectionRow = 0
     private var rowHeight = 0
@@ -134,7 +157,7 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
 
     private fun setupFilters(view: View) {
         // Day filter
-        val now = FixedZonedDateTime.now().withZoneSameInstant(ProgramGuideManager.DISPLAY_TIMEZONE)
+        val now = FixedZonedDateTime.now().withZoneSameInstant(DISPLAY_TIMEZONE)
         val dayFilterOptions = (-SELECTABLE_DAYS_IN_PAST until SELECTABLE_DAYS_IN_FUTURE).map { dayIndex ->
             val indexLong = dayIndex.toLong()
             when {
@@ -252,7 +275,7 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         programGuideManager.listeners.add(this)
         currentDateView?.alpha = 0f
         timeRow.let { timelineRow ->
-            val timelineAdapter = ProgramGuideTimeListAdapter(resources)
+            val timelineAdapter = ProgramGuideTimeListAdapter(resources, DISPLAY_TIMEZONE)
             timelineRow.adapter = timelineAdapter
             timelineRow.recycledViewPool.setMaxRecycledViews(
                     R.layout.programguide_item_time,
@@ -380,12 +403,12 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
 
     @MainThread
     fun setData(newChannels: List<ProgramGuideChannel>, newChannelEntries: Map<String, List<ProgramGuideSchedule<T>>>, selectedDate: LocalDate) {
-        programGuideManager.setData(newChannels, newChannelEntries, selectedDate)
+        programGuideManager.setData(newChannels, newChannelEntries, selectedDate, DISPLAY_TIMEZONE)
     }
 
     override fun onTimeRangeUpdated() {
         val scrollOffset = (widthPerHour * programGuideManager.getShiftedTime() / HOUR_IN_MILLIS).toInt()
-        Timber.v("Scrolling program guide with ${scrollOffset}px.")
+        Log.v(TAG, "Scrolling program guide with ${scrollOffset}px.")
         if (timeRow?.layoutManager?.childCount == 0 || isInitialScroll) {
             isInitialScroll = false
             timeRow?.post {
@@ -424,7 +447,7 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
     }
 
     private fun updateTimeOfDayFilter() {
-        val leftHour = Instant.ofEpochMilli(programGuideManager.getFromUtcMillis()).atZone(ProgramGuideManager.DISPLAY_TIMEZONE).hour
+        val leftHour = Instant.ofEpochMilli(programGuideManager.getFromUtcMillis()).atZone(DISPLAY_TIMEZONE).hour
         val selectedItemPosition = when {
             leftHour < MORNING_UNTIL_HOUR -> 0
             leftHour < AFTERNOON_UNTIL_HOUR -> 1
@@ -439,7 +462,7 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
 
     private fun updateCurrentDateText() {
         // The day might have changed
-        val viewportStartTime = Instant.ofEpochMilli(programGuideManager.getFromUtcMillis()).atZone(ProgramGuideManager.DISPLAY_TIMEZONE)
+        val viewportStartTime = Instant.ofEpochMilli(programGuideManager.getFromUtcMillis()).atZone(DISPLAY_TIMEZONE)
         var dateText = DATE_WITH_DAY_FORMATTER.format(viewportStartTime)
         if (dateText.endsWith(".")) {
             dateText = dateText.dropLast(1)
@@ -451,11 +474,11 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         timelineStartMillis = ProgramGuideUtil.floorTime(programGuideManager.getStartTime() - MIN_DURATION_FROM_START_TIME_TO_CURRENT_TIME, HALF_HOUR_IN_MILLIS)
         val timelineDifference = programGuideManager.getStartTime() - timelineStartMillis
         timelineAdjustmentPixels = ProgramGuideUtil.convertMillisToPixel(timelineDifference)
-        Timber.i("Adjusting timeline with ${timelineAdjustmentPixels}px, for a difference of ${timelineDifference / 60_000f} minutes.")
+        Log.i(TAG, "Adjusting timeline with ${timelineAdjustmentPixels}px, for a difference of ${timelineDifference / 60_000f} minutes.")
         timeRow?.let { timelineRow ->
             (timelineRow.adapter as? ProgramGuideTimeListAdapter)?.let { adapter ->
                 adapter.update(timelineStartMillis, timelineAdjustmentPixels)
-                for (i in 0 until (programGuideGrid.childCount ?: 0)) {
+                for (i in 0 until programGuideGrid.childCount) {
                     programGuideGrid.getChildAt(i)?.let { (it.findViewById<RecyclerView>(R.id.row).layoutManager as LinearLayoutManager).scrollToPosition(0) }
                 }
                 timelineRow.resetScroll()
@@ -544,15 +567,15 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         if (!useTimeOfDayFilter && programGuideManager.getStartTime() <= nowMillis && nowMillis <= programGuideManager.getEndTime()) {
             val currentProgram = programGuideManager.getCurrentProgram()
             if (currentProgram == null) {
-                Timber.w("Can't scroll to current program because schedule not found.")
+                Log.w(TAG, "Can't scroll to current program because schedule not found.")
             } else {
-                Timber.i("Scrolling to ${currentProgram.displayTitle}, started at ${currentProgram.startsAtMillis}")
+                Log.i(TAG, "Scrolling to ${currentProgram.displayTitle}, started at ${currentProgram.startsAtMillis}")
                 programGuideManager.jumpTo(currentProgram.startsAtMillis)
             }
         } else {
             // The day is not today.
             // Go to the selected time of day.
-            val timelineDate = Instant.ofEpochMilli((programGuideManager.getStartTime() + programGuideManager.getEndTime()) / 2).atZone(ProgramGuideManager.DISPLAY_TIMEZONE)
+            val timelineDate = Instant.ofEpochMilli((programGuideManager.getStartTime() + programGuideManager.getEndTime()) / 2).atZone(DISPLAY_TIMEZONE)
             val scrollToHour = when (currentlySelectedTimeOfDayFilterIndex) {
                 0 -> MORNING_STARTS_AT_HOUR
                 1 -> MORNING_UNTIL_HOUR

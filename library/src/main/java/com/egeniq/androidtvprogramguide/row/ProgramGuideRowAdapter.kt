@@ -1,6 +1,23 @@
+/*
+ * Copyright (c) 2019, Egeniq
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.egeniq.androidtvprogramguide.row
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +30,6 @@ import com.egeniq.androidtvprogramguide.ProgramGuideListAdapter
 import com.egeniq.androidtvprogramguide.ProgramGuideManager
 import com.egeniq.androidtvprogramguide.R
 import com.egeniq.androidtvprogramguide.entity.ProgramGuideChannel
-import timber.log.Timber
 import java.util.ArrayList
 
 /**
@@ -27,6 +43,10 @@ internal class ProgramGuideRowAdapter(private val context: Context, private val 
         it.setMaxRecycledViews(R.layout.programguide_item_row, context.resources.getInteger(R.integer.programguide_max_recycled_view_pool_table_item))
     }
 
+    companion object {
+        private val TAG : String = ProgramGuideRowAdapter::class.java.name
+    }
+
     init {
         update()
     }
@@ -38,7 +58,7 @@ internal class ProgramGuideRowAdapter(private val context: Context, private val 
             val listAdapter = ProgramGuideListAdapter(context.resources, programGuideHolder, i)
             programListAdapters.add(listAdapter)
         }
-        Timber.i("Updating program guide with $channelCount channels.")
+        Log.i(TAG, "Updating program guide with $channelCount channels.")
         notifyDataSetChanged()
     }
 

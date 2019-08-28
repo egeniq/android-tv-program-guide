@@ -1,8 +1,25 @@
+/*
+ * Copyright (c) 2019, Egeniq
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.egeniq.androidtvprogramguide
 
 import android.content.Context
 import android.graphics.Rect
 import android.util.AttributeSet
+import android.util.Log
 import android.util.Range
 import android.view.View
 import android.view.ViewTreeObserver
@@ -11,7 +28,6 @@ import com.egeniq.androidtvprogramguide.entity.ProgramGuideSchedule
 import com.egeniq.androidtvprogramguide.util.OnRepeatedKeyInterceptListener
 import com.egeniq.androidtvprogramguide.util.ProgramGuideUtil
 import com.egeniq.androidtvprogramguide.item.ProgramGuideItemView
-import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import kotlin.math.max
 import kotlin.math.min
@@ -23,6 +39,7 @@ class ProgramGuideGridView<T>(context: Context, attrs: AttributeSet?, defStyle: 
     companion object {
         private const val INVALID_INDEX = -1
         private val FOCUS_AREA_RIGHT_MARGIN_MILLIS = TimeUnit.MINUTES.toMillis(15)
+        private val TAG : String = ProgramGuideGridView::class.java.name
     }
 
     interface ChildFocusListener {
@@ -160,7 +177,7 @@ class ProgramGuideGridView<T>(context: Context, attrs: AttributeSet?, defStyle: 
         focusedRect.right = min(focusedRect.right, rightMostFocusablePosition)
 
         if (focusedRect.left > focusRangeRight || focusedRect.right < focusRangeLeft) {
-            Timber.w("The current focus is out of [focusRangeLeft, focusRangeRight]")
+            Log.w(TAG, "The current focus is out of [focusRangeLeft, focusRangeRight]")
             focusRangeLeft = focusedRect.left
             focusRangeRight = focusedRect.right
             return
@@ -188,7 +205,7 @@ class ProgramGuideGridView<T>(context: Context, attrs: AttributeSet?, defStyle: 
     private fun focusFind(focused: View, direction: Int): View? {
         val focusedChildIndex = getFocusedChildIndex()
         if (focusedChildIndex == INVALID_INDEX) {
-            Timber.w("No child view has focus")
+            Log.w(TAG, "No child view has focus")
             return null
         }
         val nextChildIndex = if (direction == View.FOCUS_UP) focusedChildIndex - 1 else focusedChildIndex + 1
@@ -220,7 +237,7 @@ class ProgramGuideGridView<T>(context: Context, attrs: AttributeSet?, defStyle: 
             nextFocusByUpDown = nextFocusedProgram
 
         } else {
-            Timber.w("focusFind doesn't find proper focusable")
+            Log.w(TAG, "focusFind didn't find any proper focusable")
         }
         return nextFocusedProgram
     }
