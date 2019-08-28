@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="programguide_title_no_program">No broadcast</string>
+    <string name="programguide_error_fetching_content">Unable to display content. Please try again later.</string>
+    <string name="programguide_day_yesterday">Yesterday</string>
+    <string name="programguide_day_today">Today</string>
+    <string name="programguide_day_tomorrow">Tomorrow</string>
+    <string name="programguide_day_selector_title">Select the desired day</string>
+    <string name="programguide_part_of_day_morning">Morning</string>
+    <string name="programguide_part_of_day_afternoon">Afternoon</string>
+    <string name="programguide_part_of_day_evening">Evening</string>
+    <string name="programguide_button_jump_to_live">Jump to live</string>
+</resources>

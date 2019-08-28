@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="programguide_table_width_per_hour">300dp</dimen>
+    <dimen name="programguide_program_row_height">32dp</dimen>
+    <dimen name="programguide_program_row_height_with_empty_space">36dp</dimen>
+    <dimen name="programguide_minimum_item_width_sticking_out_behind_channel_column">74dp</dimen>
+    <dimen name="programguide_item_padding">6dp</dimen>
+    <dimen name="programguide_item_spacing">2dp</dimen>
+    <dimen name="programguide_gap_item_corner_radius">2dp</dimen>
+    <dimen name="programguide_time_row_negative_margin">64dp</dimen>
+    <dimen name="programguide_time_row_height">36dp</dimen>
+    <dimen name="programguide_channel_column_width">160dp</dimen>
+    <dimen name="programguide_page_left_padding">32dp</dimen>
+    <dimen name="programguide_current_time_indicator_top_height">4dp</dimen>
+    <dimen name="programguide_filter_spacing">8dp</dimen>
+    <dimen name="programguide_page_top_margin_menu_visible">60dp</dimen>
+</resources>

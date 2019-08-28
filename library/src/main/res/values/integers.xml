@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="programguide_selection_row">2</integer>
+    <integer name="programguide_max_recycled_view_pool_table_item">30</integer>
+    <integer name="programguide_max_recycled_view_pool_time_row_item">7</integer>
+</resources>

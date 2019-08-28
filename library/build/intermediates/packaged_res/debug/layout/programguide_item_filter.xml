@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/programguide_filter_spinner_background"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="22dp"
+        android:layout_gravity="right"
+        android:layout_marginRight="6dp"
+        android:layout_marginTop="2dp"
+        android:src="@drawable/programguide_icon_dropdown"
+        android:tint="@color/programguide_filter_icon_color" />
+
+    <TextView
+        android:id="@+id/programguide_filter_title"
+        style="@style/Widget.AppCompat.DropDownItem.Spinner"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:paddingBottom="4dp"
+        android:paddingTop="4dp"
+        tools:text="Filter title" />
+
+</FrameLayout>

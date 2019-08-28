@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.egeniq.androidtvprogramguide.item.ProgramGuideItemView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="@dimen/programguide_program_row_height"
+    android:layout_margin="@dimen/programguide_item_spacing"
+    android:background="@drawable/programguide_item_program_background"
+    android:clickable="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    tools:layout_margin="20dp" />

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="ProgramGuide.Button.JumpToLive" parent="">
+        <item name="android:textSize">14sp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">8dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+    </style>
+
+    <style name="ProgramGuide.Text.Detail.Title" parent="">
+        <item name="android:fontFamily">@font/open_sans_regular</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/programguide_detail_text_color</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:layout_marginLeft">16dp</item>
+    </style>
+
+    <style name="ProgramGuide.Text.Detail.Metadata" parent="">
+        <item name="android:fontFamily">@font/open_sans_regular</item>
+        <item name="android:textColor">@color/programguide_detail_text_color</item>
+        <item name="android:layout_marginTop">6dp</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="ProgramGuide.Text.Detail.Description" parent="">
+        <item name="android:fontFamily">@font/open_sans_regular</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/programguide_detail_text_color</item>
+        <item name="android:maxLines">5</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:layout_marginRight">96dp</item>
+        <item name="android:layout_marginTop">6dp</item>
+    </style>
+
+    <style name="ProgramGuide.Text.Channel" parent="">
+        <item name="android:fontFamily">@font/open_sans_regular</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/programguide_channel_text_color</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:layout_gravity">left|center_vertical</item>
+        <item name="android:ellipsize">middle</item>
+        <item name="android:layout_marginLeft">40dp</item>
+        <item name="android:layout_marginRight">4dp</item>
+    </style>
+
+    <style name="ProgramGuide.Tab" parent="">
+        <item name="android:minWidth">48dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">8dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+    </style>
+
+    <style name="ProgramGuide.Image.Detail" parent="">
+        <item name="android:layout_width">213dp</item>
+        <item name="android:layout_height">120dp</item>
+        <item name="android:scaleType">centerInside</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">8dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+    </style>
+
+    <style name="ProgramGuide.Text.Program.Title" parent="">
+        <item name="android:fontFamily">@font/open_sans_regular</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:padding">@dimen/programguide_item_padding</item>
+        <item name="android:duplicateParentState">true</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textAlignment">viewStart</item>
+        <item name="android:textColor">@color/programguide_item_text_color</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <color name="programguide_detail_text_color">#888888</color>
+</resources>
