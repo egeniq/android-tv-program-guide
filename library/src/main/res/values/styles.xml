@@ -65,19 +65,6 @@
         <item name="android:layout_marginRight">4dp</item>
     </style>
 
-    <style name="ProgramGuide.Tab" parent="">
-        <item name="android:minWidth">48dp</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:ellipsize">end</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:minHeight">0dp</item>
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:paddingRight">8dp</item>
-        <item name="android:paddingTop">4dp</item>
-        <item name="android:paddingBottom">4dp</item>
-    </style>
-
     <style name="ProgramGuide.Image.Detail" parent="">
         <item name="android:layout_width">200dp</item>
         <item name="android:layout_height">110dp</item>
@@ -92,8 +79,8 @@
     <style name="ProgramGuide.Image.Channel" parent="">
         <item name="android:layout_width">36dp</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginTop">6dp</item>
-        <item name="android:layout_marginBottom">6dp</item>
+        <item name="android:layout_marginTop">7dp</item>
+        <item name="android:layout_marginBottom">7dp</item>
         <item name="android:layout_gravity">left|center_vertical</item>
         <item name="android:scaleType">fitStart</item>
     </style>

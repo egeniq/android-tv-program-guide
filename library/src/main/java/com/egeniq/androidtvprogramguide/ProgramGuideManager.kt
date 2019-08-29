@@ -22,8 +22,7 @@ import com.egeniq.androidtvprogramguide.entity.ProgramGuideChannel
 import com.egeniq.androidtvprogramguide.entity.ProgramGuideSchedule
 import com.egeniq.androidtvprogramguide.util.FixedZonedDateTime
 import org.threeten.bp.LocalDate
-import org.threeten.bp.ZoneOffset
-import java.util.*
+import org.threeten.bp.ZoneId
 import java.util.concurrent.TimeUnit
 import kotlin.math.max
 
@@ -79,7 +78,7 @@ class ProgramGuideManager<T> {
     }
 
 
-    private fun updateChannelsTimeRange(selectedDate: LocalDate, timeZone: ZoneOffset) {
+    private fun updateChannelsTimeRange(selectedDate: LocalDate, timeZone: ZoneId) {
         val viewPortWidth = toUtcMillis - fromUtcMillis
         var newStartMillis: Long? = null
         var newEndMillis: Long? = null
@@ -323,7 +322,7 @@ class ProgramGuideManager<T> {
     }
 
     @MainThread
-    fun setData(newChannels: List<ProgramGuideChannel>, newChannelEntries: Map<String, List<ProgramGuideSchedule<T>>>, selectedDate: LocalDate, timeZone: ZoneOffset) {
+    fun setData(newChannels: List<ProgramGuideChannel>, newChannelEntries: Map<String, List<ProgramGuideSchedule<T>>>, selectedDate: LocalDate, timeZone: ZoneId) {
         channels.clear()
         channelEntriesMap.clear()
 

@@ -27,6 +27,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.ViewAnimator
+import androidx.annotation.LayoutRes
 import androidx.annotation.MainThread
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -48,6 +49,7 @@ import com.egeniq.androidtvprogramguide.util.FixedZonedDateTime
 import com.egeniq.androidtvprogramguide.util.ProgramGuideUtil
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
+import org.threeten.bp.ZoneId
 import org.threeten.bp.ZoneOffset
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.temporal.ChronoUnit
@@ -65,9 +67,6 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         // In order to prevent from clipping out the current program, this value need be larger than
         // or equal to ProgramManager.ENTRY_MIN_DURATION.
         private val MIN_DURATION_FROM_START_TIME_TO_CURRENT_TIME = ProgramGuideManager.ENTRY_MIN_DURATION
-
-        private val FILTER_DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE
-
         private val TIME_INDICATOR_UPDATE_INTERVAL = TimeUnit.SECONDS.toMillis(5)
 
         private const val TIME_OF_DAY_MORNING = "time_of_day_morning"
@@ -78,19 +77,24 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         private const val MORNING_UNTIL_HOUR = 12
         private const val AFTERNOON_UNTIL_HOUR = 19
 
-        private val TAG : String = ProgramGuideFragment::class.java.name
+        private val TAG: String = ProgramGuideFragment::class.java.name
     }
+
+    protected val FILTER_DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE
 
     // Config values, override in subclass if necessary
     protected open val DISPLAY_LOCALE = Locale("en", "US")
-    protected open val DISPLAY_TIMEZONE: ZoneOffset = ZoneOffset.UTC
+    protected open val DISPLAY_TIMEZONE: ZoneId = ZoneOffset.UTC
     protected open val SELECTABLE_DAYS_IN_PAST = 7
     protected open val SELECTABLE_DAYS_IN_FUTURE = 7
     protected open val USE_HUMAN_DATES = true
     @Suppress("LeakingThis")
     protected open val DATE_WITH_DAY_FORMATTER = DateTimeFormatter.ofPattern("EEE d MMM").withLocale(DISPLAY_LOCALE)
     protected open val DISPLAY_CURRENT_TIME_INDICATOR = true
+
     override val DISPLAY_SHOW_PROGRESS = true
+    @LayoutRes
+    protected open val OVERRIDE_LAYOUT_ID: Int? = null
 
 
     private var selectionRow = 0
@@ -101,8 +105,10 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
     private var isInitialScroll = true
 
     @Suppress("LeakingThis")
-    private var currentlySelectedFilterIndex = SELECTABLE_DAYS_IN_PAST
-    private var currentlySelectedTimeOfDayFilterIndex = -1 // Correct value will be set later
+    protected var currentlySelectedFilterIndex = SELECTABLE_DAYS_IN_PAST
+        private set
+    protected var currentlySelectedTimeOfDayFilterIndex = -1 // Correct value will be set later
+        private set
     private var currentState = State.Loading
 
     private var created = false
@@ -150,8 +156,9 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
     abstract fun requestRefresh()
     abstract fun onScheduleSelected(programGuideSchedule: ProgramGuideSchedule<T>?)
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.programguide_fragment, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val view = inflater.inflate(OVERRIDE_LAYOUT_ID
+                ?: R.layout.programguide_fragment, container, false)
         setupFilters(view)
         setupComponents(view)
         return view
@@ -210,7 +217,7 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         timeOfDayFilter.findViewById<TextView>(R.id.programguide_filter_title).text = timeOfDayFilterOptions[currentlySelectedTimeOfDayFilterIndex].displayTitle
         timeOfDayFilter?.setOnClickListener {
             AlertDialog.Builder(it.context)
-                    .setTitle(R.string.programguide_day_selector_title)
+                    .setTitle(R.string.programguide_day_time_selector_title)
                     .setSingleChoiceItems(timeOfDayFilterOptions.map { it.displayTitle }.toTypedArray(), currentlySelectedTimeOfDayFilterIndex) { dialogInterface, position ->
                         currentlySelectedTimeOfDayFilterIndex = position
                         timeOfDayFilter.findViewById<TextView>(R.id.programguide_filter_title).text = timeOfDayFilterOptions[currentlySelectedTimeOfDayFilterIndex].displayTitle
@@ -340,7 +347,7 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         }
     }
 
-    private fun updateCurrentTimeIndicator(now: Long = System.currentTimeMillis()) {
+    protected fun updateCurrentTimeIndicator(now: Long = System.currentTimeMillis()) {
         if (currentState != State.Content || !DISPLAY_CURRENT_TIME_INDICATOR) {
             currentTimeIndicator?.visibility = View.GONE
             return
