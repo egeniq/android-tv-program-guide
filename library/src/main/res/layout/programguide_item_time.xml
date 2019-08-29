@@ -17,9 +17,6 @@
 
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/programguide_time_row_height"
-    android:gravity="center"
-    android:textColor="@color/programguide_time_text_color"
-    android:textSize="12sp"
+    style="@style/ProgramGuide.Text.Time"
+    tools:background="@color/programguide_content_background"
     tools:text="8:00" />

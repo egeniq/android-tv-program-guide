@@ -79,14 +79,23 @@
     </style>
 
     <style name="ProgramGuide.Image.Detail" parent="">
-        <item name="android:layout_width">213dp</item>
-        <item name="android:layout_height">120dp</item>
+        <item name="android:layout_width">200dp</item>
+        <item name="android:layout_height">110dp</item>
         <item name="android:scaleType">centerInside</item>
         <item name="android:textSize">14sp</item>
         <item name="android:ellipsize">end</item>
         <item name="android:elevation">4dp</item>
         <item name="android:singleLine">true</item>
         <item name="android:minHeight">0dp</item>
+    </style>
+
+    <style name="ProgramGuide.Image.Channel" parent="">
+        <item name="android:layout_width">36dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">6dp</item>
+        <item name="android:layout_marginBottom">6dp</item>
+        <item name="android:layout_gravity">left|center_vertical</item>
+        <item name="android:scaleType">fitStart</item>
     </style>
 
     <style name="ProgramGuide.Text.Program.Title" parent="">
@@ -100,6 +109,15 @@
         <item name="android:textAlignment">viewStart</item>
         <item name="android:textColor">@color/programguide_item_text_color</item>
         <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="ProgramGuide.Text.Time" parent="">
+        <item name="android:fontFamily">@font/open_sans_regular</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/programguide_time_row_height</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/programguide_time_text_color</item>
     </style>
 
     <style name="ProgramGuide.Text.Filter" parent="Widget.AppCompat.DropDownItem.Spinner">

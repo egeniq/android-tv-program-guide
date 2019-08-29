@@ -7,6 +7,8 @@ import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.egeniq.androidtvprogramguide.ProgramGuideFragment
 import com.egeniq.androidtvprogramguide.R
 import com.egeniq.androidtvprogramguide.entity.ProgramGuideChannel
@@ -24,6 +26,11 @@ import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
 class EpgFragment : ProgramGuideFragment<EpgFragment.SimpleProgram>() {
+
+    // Feel free to change configuration values like this:
+    //
+    // override val DISPLAY_CURRENT_TIME_INDICATOR = false
+    // override val DISPLAY_SHOW_PROGRESS = false
 
     companion object {
         private val TAG = EpgFragment::class.java.name
@@ -62,7 +69,17 @@ class EpgFragment : ProgramGuideFragment<EpgFragment.SimpleProgram>() {
         metadataView?.text = programGuideSchedule?.program?.metadata
         val descriptionView = view?.findViewById<TextView>(R.id.programguide_detail_description)
         descriptionView?.text = programGuideSchedule?.program?.description
-        val imageView = view?.findViewById<ImageView>(R.id.programguide_detail_image)
+        val imageView = view?.findViewById<ImageView>(R.id.programguide_detail_image) ?: return
+        if (programGuideSchedule != null) {
+            Glide.with(imageView)
+                .load("https://picsum.photos/462/240?random=" + (programGuideSchedule?.id ?: 0))
+                .centerCrop()
+                .error(R.drawable.programguide_icon_placeholder)
+                .transition(withCrossFade())
+                .into(imageView)
+        } else {
+            Glide.with(imageView).clear(imageView)
+        }
     }
 
     override fun isTopMenuVisible(): Boolean {
@@ -86,17 +103,19 @@ class EpgFragment : ProgramGuideFragment<EpgFragment.SimpleProgram>() {
 
         Single.fromCallable {
             val channels = listOf(
-                SimpleChannel("npo-1", SpannedString("NPO 1"), "https://www-assets.npo.nl/uploads/tv_channel/263/logo/logo-npo1.png"),
-                SimpleChannel("npo-2", SpannedString("NPO 2"), "https://www-assets.npo.nl/uploads/tv_channel/264/logo/logo-npo2.png"),
-                SimpleChannel("npo-zapp", SpannedString("NPO Zapp"), "https://www-assets.npo.nl/uploads/tv_channel/301/logo/NPO_ZAPP_2018-logo.png"),
-                SimpleChannel("npo-1-extra", SpannedString("NPO 1 Extra"), "https://www-assets.npo.nl/uploads/tv_channel/281/logo/logo_npo1_extra.png"),
-                SimpleChannel("npo-2-extra", SpannedString("NPO 2 Extra"), "https://www-assets.npo.nl/uploads/tv_channel/280/logo/NPO_TV2_Extra_Logo_RGB_1200dpi.png"),
-                SimpleChannel("npo-zappelin-extra", SpannedString("NPO Zappelin Extra"), "https://www-assets.npo.nl/uploads/tv_channel/288/logo/NPO-Zappelin_EXTRA_groen_2018-logo-RGB.PNG"),
-                SimpleChannel("npo-nieuws", SpannedString("NPO Nieuws"), "https://www-assets.npo.nl/uploads/tv_channel/279/logo/logonieuws.png"),
-                SimpleChannel("npo-politiek", SpannedString("NPO Politiek"), "https://www-assets.npo.nl/uploads/tv_channel/282/logo/NPO_Politiek.png")
+                SimpleChannel("npo-1", SpannedString("NPO 1"), "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/NPO_1_logo_2014.svg/320px-NPO_1_logo_2014.svg.png"),
+                SimpleChannel("npo-2", SpannedString("NPO 2"), "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/NPO_2_logo_2014.svg/275px-NPO_2_logo_2014.svg.png"),
+                SimpleChannel("bbc-news", SpannedString("BBC NEWS"), "https://upload.wikimedia.org/wikipedia/en/thumb/6/62/BBC_News_2019.svg/240px-BBC_News_2019.svg.png"),
+                SimpleChannel("zdf", SpannedString("ZDF"), "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/ZDF_logo.svg/200px-ZDF_logo.svg.png"),
+                SimpleChannel("jednotka", SpannedString("Jednotka"), "https://upload.wikimedia.org/wikipedia/en/thumb/7/76/Jednotka.svg/255px-Jednotka.svg.png"),
+                SimpleChannel("tv-nova", SpannedString("TV nova"), "https://upload.wikimedia.org/wikipedia/commons/2/2f/TV_Nova_logo_2017.png"),
+                SimpleChannel("tv-5-monde", SpannedString("TV5MONDE"), "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/TV5MONDE_logo.png/320px-TV5MONDE_logo.png"),
+                SimpleChannel("orf-2", SpannedString("ORF 2"), "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/ORF2_logo_n.svg/320px-ORF2_logo_n.svg.png"),
+                SimpleChannel("tvp-1", SpannedString("TVP 1"), "https://upload.wikimedia.org/wikipedia/commons/e/ec/Tvp1.png")
             )
 
-            val showNames = listOf("Jinek", "Pingu in de Stad", "Binnenstebuiten", "Nieuws", "Calimero", "NOS Journaal", "De slimste mens", "K3 Roller Disco", "No-no", "Het zandkasteel", "Ik, Plastic", "MAX Geheugentrainer", "Tijd voor MAX", "De speelgoeddokter", "We Zijn er Bijna!", "Timmy Tijd", "De Hofbar", "Sesamstraat", "Heidi", "Kook mee met MAX", "Opsporing Verzocht", "Showroom", "Checkpoint", "Beste Vrienden Quiz", "All Stars", "Stuk", "EenVandaag")
+            val showNames = listOf("News", "Sherlock Holmes", "It's Always Sunny In Philadelphia", "Second World War Documentary", "World Cup Final Replay", "Game of Thrones",
+                "NFL Sunday Night Football", "NCIS", "Seinfeld", "ER", "Who Wants To Be A Millionaire", "Our Planet", "Friends", "House of Cards")
 
             val channelMap = mutableMapOf<String, List<ProgramGuideSchedule<SimpleProgram>>>()
 

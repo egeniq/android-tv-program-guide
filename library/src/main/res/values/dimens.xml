@@ -29,6 +29,7 @@
     <dimen name="programguide_page_left_padding">32dp</dimen>
     <dimen name="programguide_current_time_indicator_top_height">4dp</dimen>
     <dimen name="programguide_filter_spacing">8dp</dimen>
-    <dimen name="programguide_page_top_margin_menu_visible">60dp</dimen>
+    <dimen name="programguide_page_top_margin_menu_visible">8dp</dimen>
     <dimen name="programguide_button_corner_radius">4dp</dimen>
+    <dimen name="programguide_bottom_detail_height">146dp</dimen>
 </resources>

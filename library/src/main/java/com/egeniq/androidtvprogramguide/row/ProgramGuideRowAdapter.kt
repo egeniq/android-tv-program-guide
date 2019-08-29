@@ -30,21 +30,29 @@ import com.egeniq.androidtvprogramguide.ProgramGuideListAdapter
 import com.egeniq.androidtvprogramguide.ProgramGuideManager
 import com.egeniq.androidtvprogramguide.R
 import com.egeniq.androidtvprogramguide.entity.ProgramGuideChannel
-import java.util.ArrayList
+import java.util.*
 
 /**
  * Adapts the [ProgramGuideListAdapter] list to the body of the program guide table.
  */
-internal class ProgramGuideRowAdapter(private val context: Context, private val programGuideHolder: ProgramGuideHolder<*>) :
-        RecyclerView.Adapter<ProgramGuideRowAdapter.ProgramRowViewHolder>(), ProgramGuideManager.Listener {
+internal class ProgramGuideRowAdapter(
+    private val context: Context,
+    private val programGuideHolder: ProgramGuideHolder<*>
+) :
+    RecyclerView.Adapter<ProgramGuideRowAdapter.ProgramRowViewHolder>(),
+    ProgramGuideManager.Listener {
     private val programManager: ProgramGuideManager<*> = programGuideHolder.programGuideManager
     private val programListAdapters = ArrayList<ProgramGuideListAdapter<*>>()
-    private val recycledViewPool: RecyclerView.RecycledViewPool = RecyclerView.RecycledViewPool().also {
-        it.setMaxRecycledViews(R.layout.programguide_item_row, context.resources.getInteger(R.integer.programguide_max_recycled_view_pool_table_item))
-    }
+    private val recycledViewPool: RecyclerView.RecycledViewPool =
+        RecyclerView.RecycledViewPool().also {
+            it.setMaxRecycledViews(
+                R.layout.programguide_item_row,
+                context.resources.getInteger(R.integer.programguide_max_recycled_view_pool_table_item)
+            )
+        }
 
     companion object {
-        private val TAG : String = ProgramGuideRowAdapter::class.java.name
+        private val TAG: String = ProgramGuideRowAdapter::class.java.name
     }
 
     init {
@@ -123,8 +131,9 @@ internal class ProgramGuideRowAdapter(private val context: Context, private val 
                 channelLogoView.visibility = View.GONE
             } else {
                 Glide.with(channelLogoView)
-                        .load(imageUrl)
-                        .into(channelLogoView)
+                    .load(imageUrl)
+                    .fitCenter()
+                    .into(channelLogoView)
                 channelLogoView.visibility = View.VISIBLE
             }
             channelNameView.text = channel.name

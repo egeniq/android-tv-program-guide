@@ -215,7 +215,7 @@ class ProgramGuideRowGridView @JvmOverloads constructor(context: Context, attrs:
         }
 
         //if not check if we have a next child and recursively test it again
-        if (viewPosition != null && viewPosition > 0 && viewPosition < (layoutManager?.itemCount ?: 0 - 1)) {
+        if (viewPosition != null && viewPosition >= 0 && viewPosition < (layoutManager?.itemCount ?: 0 - 1)) {
             val nextChild = layoutManager?.findViewByPosition(viewPosition + 1)
             nextChild?.let {
                 return findNextFocusableChild(it)

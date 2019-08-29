@@ -88,19 +88,20 @@ class ProgramGuideListAdapter<T>(res: Resources, private val programGuideFragmen
             itemView.clipToOutline = true
         }
 
-        fun onBind(schedule: ProgramGuideSchedule<R>, programGuideFragment: ProgramGuideHolder<R>, gapTitle: String) {
-            val programManager = programGuideFragment.programGuideManager
+        fun onBind(schedule: ProgramGuideSchedule<R>, programGuideHolder: ProgramGuideHolder<R>, gapTitle: String) {
+            val programManager = programGuideHolder.programGuideManager
             @Suppress("UNCHECKED_CAST")
             programGuideItemView = itemView as ProgramGuideItemView<R>
 
             programGuideItemView?.setOnClickListener {
-                programGuideFragment.onScheduleClicked(schedule)
+                programGuideHolder.onScheduleClicked(schedule)
             }
             programGuideItemView?.setValues(
                     scheduleItem = schedule,
                     fromUtcMillis = programManager.getFromUtcMillis(),
                     toUtcMillis = programManager.getToUtcMillis(),
-                    gapTitle = gapTitle
+                    gapTitle = gapTitle,
+                    displayProgress = programGuideHolder.DISPLAY_SHOW_PROGRESS
             )
         }
 

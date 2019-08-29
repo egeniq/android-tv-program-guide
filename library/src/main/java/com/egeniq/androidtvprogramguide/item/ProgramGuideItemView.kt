@@ -52,7 +52,8 @@ class ProgramGuideItemView<T> : FrameLayout {
         progressView = findViewById(R.id.progress)
     }
 
-    fun setValues(scheduleItem: ProgramGuideSchedule<T>, fromUtcMillis: Long, toUtcMillis: Long, gapTitle: String) {
+    fun setValues(scheduleItem: ProgramGuideSchedule<T>, fromUtcMillis: Long, toUtcMillis: Long,
+                  gapTitle: String, displayProgress: Boolean) {
         schedule = scheduleItem
         val layoutParams = layoutParams
         if (layoutParams != null) {
@@ -73,10 +74,15 @@ class ProgramGuideItemView<T> : FrameLayout {
 
         updateText(title)
         initProgress(ProgramGuideUtil.convertMillisToPixel(startMillis = scheduleItem.startsAtMillis, endMillis = scheduleItem.endsAtMillis))
-        updateProgress(System.currentTimeMillis())
+        if (displayProgress) {
+            updateProgress(System.currentTimeMillis())
+        } else {
+            progressView.visibility = View.GONE
+        }
 
-        measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED)
-        itemTextWidth = measuredWidth - paddingStart - paddingEnd
+        titleView.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
+            MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED))
+        itemTextWidth = titleView.measuredWidth - titleView.paddingLeft - titleView.paddingRight
         // Maximum width for us to use a ripple
         maxWidthForRipple = ProgramGuideUtil.convertMillisToPixel(fromUtcMillis, toUtcMillis)
     }

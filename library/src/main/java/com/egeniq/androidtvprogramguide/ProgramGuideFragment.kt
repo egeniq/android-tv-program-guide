@@ -89,6 +89,8 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
     protected open val USE_HUMAN_DATES = true
     @Suppress("LeakingThis")
     protected open val DATE_WITH_DAY_FORMATTER = DateTimeFormatter.ofPattern("EEE d MMM").withLocale(DISPLAY_LOCALE)
+    protected open val DISPLAY_CURRENT_TIME_INDICATOR = true
+    override val DISPLAY_SHOW_PROGRESS = true
 
 
     private var selectionRow = 0
@@ -169,8 +171,8 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         }
         val dayFilter = view.findViewById<View>(R.id.programguide_day_filter)
         dayFilter.findViewById<TextView>(R.id.programguide_filter_title).text = dayFilterOptions[currentlySelectedFilterIndex].displayTitle
-        dayFilter.setOnClickListener {
-            AlertDialog.Builder(it.context)
+        dayFilter.setOnClickListener { filterView ->
+            AlertDialog.Builder(filterView.context)
                     .setTitle(R.string.programguide_day_selector_title)
                     .setSingleChoiceItems(dayFilterOptions.map { it.displayTitle }.toTypedArray(), currentlySelectedFilterIndex) { dialogInterface, position ->
                         currentlySelectedFilterIndex = position
@@ -339,7 +341,7 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
     }
 
     private fun updateCurrentTimeIndicator(now: Long = System.currentTimeMillis()) {
-        if (currentState != State.Content) {
+        if (currentState != State.Content || !DISPLAY_CURRENT_TIME_INDICATOR) {
             currentTimeIndicator?.visibility = View.GONE
             return
         }
@@ -366,6 +368,9 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
      * Update the progressbar
      */
     private fun updateCurrentProgramProgress(now: Long = System.currentTimeMillis()) {
+        if (!DISPLAY_SHOW_PROGRESS) {
+            return
+        }
         for (i in 0 until programGuideGrid.childCount) {
             programGuideGrid.getChildAt(i)?.let {
                 it.findViewById<RecyclerView>(R.id.row)?.let { recycler ->
@@ -382,16 +387,18 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
 
     override fun onStart() {
         super.onStart()
-
-        progressUpdateHandler.removeCallbacks(progressUpdateRunnable)
-        progressUpdateHandler.post(progressUpdateRunnable)
+        if (DISPLAY_SHOW_PROGRESS) {
+            progressUpdateHandler.removeCallbacks(progressUpdateRunnable)
+            progressUpdateHandler.post(progressUpdateRunnable)
+        }
 
     }
 
     override fun onPause() {
         super.onPause()
-
-        progressUpdateHandler.removeCallbacks(progressUpdateRunnable)
+        if (DISPLAY_SHOW_PROGRESS) {
+            progressUpdateHandler.removeCallbacks(progressUpdateRunnable)
+        }
     }
 
     override fun onDestroyView() {
