@@ -1,0 +1,2 @@
+include ':library', ":demo"
+rootProject.name='Android TV Program Guide'
