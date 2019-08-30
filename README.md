@@ -1,5 +1,4 @@
-# android-tv-program-guide
-Android TV Program Guide
+android-tv-program-guide
 ========================
 
 ![Scrolling demo](https://raw.githubusercontent.com/egeniq/android-tv-program-guide/master/documentation/scrolling.gif)
