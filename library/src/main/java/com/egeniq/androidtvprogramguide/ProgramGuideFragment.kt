@@ -151,12 +151,39 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         Loading, Content, Error
     }
 
+    /**
+     * Used if you have a collapsible top menu.
+     * Return false if you don't
+     */
     abstract fun isTopMenuVisible(): Boolean
+
+    /**
+     * The user has selected a date, and wants to see the program guide for the date supplied in the parameter.
+     * When loading data, you can use the setState(State) method to toggle between the different views.
+     */
     abstract fun requestingProgramGuideFor(localDate: LocalDate)
+
+    /**
+     * Denotes that the fragment wants to refresh its data, now only used at initialization.
+     * You should probably request the program guide for the current date at this point.
+     */
     abstract fun requestRefresh()
+
+    /**
+     *  Called when the user has selected a schedule from the grid.
+     *  When no schedule is selected (such as when navigating outside the grid), the parameter will be null.
+     */
     abstract fun onScheduleSelected(programGuideSchedule: ProgramGuideSchedule<T>?)
 
+    /**
+     * Called when the user has clicked on a schedule.
+     * The schedule parameter contains all the info you need for taking an action.
+     */
+    abstract fun onScheduleClicked(programGuideSchedule: ProgramGuideSchedule<T>)
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        // Overriding the layout ID is also possible, so that if your layout naming follows a specific
+        // structure, you are not obligated to use the name we use in the library.
         val view = inflater.inflate(OVERRIDE_LAYOUT_ID
                 ?: R.layout.programguide_fragment, container, false)
         setupFilters(view)
@@ -164,6 +191,11 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         return view
     }
 
+    /**
+     * We call the day and daytime switchers filters here.
+     * The selectable days and their displays can be changed by the config parameters.
+     * Also you can change the display values by overriding the string resources.
+     */
     private fun setupFilters(view: View) {
         // Day filter
         val now = FixedZonedDateTime.now().withZoneSameInstant(DISPLAY_TIMEZONE)
@@ -228,18 +260,36 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         }
     }
 
+    /**
+     * The 'jump to live' button visibility can be set here.
+     * It should only be visible if the date is today, and the current scroll range does not show
+     * the current timestamp.
+     */
     private fun setJumpToLiveButtonVisible(visible: Boolean) {
         jumpToLive?.visibility = if (visible) View.VISIBLE else View.GONE
     }
 
+
+    /**
+     * Sets the selected schedule internally.
+     */
     private fun setSelectedSchedule(schedule: ProgramGuideSchedule<T>?) {
         onScheduleSelected(schedule)
     }
 
+
+    /**
+     * When the row view is created, it needs to know the current scroll offset, so it stays in sync
+     * with the other, already existing rows
+     */
     override fun getTimelineRowScrollOffset(): Int {
         return timeRow?.currentScrollOffset ?: 0
     }
 
+
+    /**
+     * Sets up all the components to be used by the fragment.
+     */
     @Suppress("ObjectLiteralToLambda", "DEPRECATION")
     @SuppressLint("RestrictedApi")
     private fun setupComponents(view: View) {
@@ -295,6 +345,9 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         jumpToLive.setOnClickListener { autoScrollToBestProgramme() }
     }
 
+    /**
+     * Called when the fragment view has been created. We initialize some of our views here.
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (savedInstanceState == null && !created) {
@@ -312,6 +365,10 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         }
     }
 
+    /**
+     * The top margin visibility can be changed, this is useful if you have a menu which collapses and
+     * expands on top.
+     */
     private fun setTopMarginVisibility(visible: Boolean) {
         val constraint = ConstraintSet()
         val constraintRoot = view?.findViewById<ConstraintLayout>(R.id.programguide_constraint_root)
@@ -331,6 +388,9 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         constraint.applyTo(constraintRoot)
     }
 
+    /**
+     * Called when the timerow has scrolled. We should scroll the grid the same way.
+     */
     private fun onHorizontalScrolled(dx: Int) {
         if (dx == 0) {
             return
@@ -347,7 +407,12 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         }
     }
 
+    /**
+     * Updates the vertical bar which displays the current time.
+     * If the currently visible time range does not contain the live timestamp, it should be hidden.
+     */
     protected fun updateCurrentTimeIndicator(now: Long = System.currentTimeMillis()) {
+        // No content, of feature is disabled -> hide
         if (currentState != State.Content || !DISPLAY_CURRENT_TIME_INDICATOR) {
             currentTimeIndicator?.visibility = View.GONE
             return
@@ -372,7 +437,7 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
     }
 
     /**
-     * Update the progressbar
+     * Update the progressbar in each visible program view.
      */
     private fun updateCurrentProgramProgress(now: Long = System.currentTimeMillis()) {
         if (!DISPLAY_SHOW_PROGRESS) {
@@ -392,15 +457,21 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         }
     }
 
-    override fun onStart() {
-        super.onStart()
+    /**
+     * Called when the fragment will be resumed.
+     * Starts the progress updates for the programs.
+     */
+    override fun onResume() {
+        super.onResume()
         if (DISPLAY_SHOW_PROGRESS) {
             progressUpdateHandler.removeCallbacks(progressUpdateRunnable)
             progressUpdateHandler.post(progressUpdateRunnable)
         }
-
     }
 
+    /**
+     * Called when the fragment will be paused. We stop the progress updates in this case.
+     */
     override fun onPause() {
         super.onPause()
         if (DISPLAY_SHOW_PROGRESS) {
@@ -408,6 +479,9 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         }
     }
 
+    /**
+     * Called when the fragment will be destroyed. Removes the listeners to avoid memory leaks.
+     */
     override fun onDestroyView() {
         programGuideManager.listeners.remove(this)
         programGuideGrid.scheduleSelectionListener = null
@@ -415,6 +489,9 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         super.onDestroyView()
     }
 
+    /**
+     * Via this method you can supply the data to be displayed to the fragment
+     */
     @MainThread
     fun setData(newChannels: List<ProgramGuideChannel>, newChannelEntries: Map<String, List<ProgramGuideSchedule<T>>>, selectedDate: LocalDate) {
         programGuideManager.setData(newChannels, newChannelEntries, selectedDate, DISPLAY_TIMEZONE)
@@ -505,6 +582,9 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         setTopMarginVisibility(isVisible)
     }
 
+    /**
+     * Changes the state, used for animated and handling visibility of some screen components.
+     */
     fun setState(state: State) {
         currentState = state
         val alpha: Float
@@ -522,7 +602,7 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
                 contentAnimator?.displayedChild = 0
             }
         }
-        listOf(currentDateView, timeRow).map {
+        listOf(currentDateView, timeRow, currentTimeIndicator).map {
             if (it == null) {
                 return
             }
@@ -531,6 +611,11 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         }
     }
 
+    /**
+     * The GridView calls this method on the fragment when the focused child changes.
+     * This is important because we scroll the grid vertically if there are still
+     * channels to be shown in the desired direction.
+     */
     override fun onRequestChildFocus(oldFocus: View?, newFocus: View?) {
         if (oldFocus != null && newFocus != null) {
             val selectionRowOffset = selectionRow * rowHeight
@@ -550,15 +635,24 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         }
     }
 
+    /**
+     * The gridview calls this method on the fragment when the focus changes on one of their child changes.
+     */
     override fun onSelectionChanged(schedule: ProgramGuideSchedule<T>?) {
         setSelectedSchedule(schedule)
     }
 
-    private fun onScheduleClickedInternal(schedule: ProgramGuideSchedule<T>) {
+    /**
+     * This method is called from the ProgramGuideListAdapter, when the OnClickListener is triggered.
+     */
+    override fun onScheduleClickedInternal(schedule: ProgramGuideSchedule<T>) {
         ProgramGuideUtil.lastClickedSchedule = schedule
         onScheduleClicked(schedule)
     }
 
+    /**
+     * Called by the manager if the channels and programs are ready to be displayed.
+     */
     override fun onSchedulesUpdated() {
         (programGuideGrid.adapter as? ProgramGuideRowAdapter)?.update()
         updateTimeline()
@@ -575,6 +669,10 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         timeRow?.animate()?.alpha(1f)?.setDuration(500)
     }
 
+    /**
+     * After laying out all the views inside the grid, we want to scroll
+     * to the most relevant programme to the user. This function takes care of that.
+     */
     private fun autoScrollToBestProgramme(useTimeOfDayFilter: Boolean = false) {
         val nowMillis = Instant.now().toEpochMilli()
         // If the current time is within the managed frame, jump to it.

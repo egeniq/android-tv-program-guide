@@ -94,7 +94,7 @@ class ProgramGuideListAdapter<T>(res: Resources, private val programGuideFragmen
             programGuideItemView = itemView as ProgramGuideItemView<R>
 
             programGuideItemView?.setOnClickListener {
-                programGuideHolder.onScheduleClicked(schedule)
+                programGuideHolder.onScheduleClickedInternal(schedule)
             }
             programGuideItemView?.setValues(
                     scheduleItem = schedule,
