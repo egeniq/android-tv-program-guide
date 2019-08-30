@@ -43,3 +43,6 @@ Have you found a bug, or does the library not work on your device? Open a ticket
 steps and the manufacturer and model of your device, and we will do our best to help you.
 Pull requests are always welcome.
 
+### License
+
+This project is licensed under [the Apache 2.0 license](https://raw.githubusercontent.com/egeniq/android-tv-program-guide/master/LICENSE)

@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.egeniq.androidtvprogramguide.ProgramGuideFragment
 import com.egeniq.androidtvprogramguide.R
@@ -72,9 +73,10 @@ class EpgFragment : ProgramGuideFragment<EpgFragment.SimpleProgram>() {
         val imageView = view?.findViewById<ImageView>(R.id.programguide_detail_image) ?: return
         if (programGuideSchedule != null) {
             Glide.with(imageView)
-                .load("https://picsum.photos/462/240?random=" + (programGuideSchedule?.id ?: 0))
+                .load("https://picsum.photos/462/240?random=" + programGuideSchedule.displayTitle.hashCode())
                 .centerCrop()
                 .error(R.drawable.programguide_icon_placeholder)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .transition(withCrossFade())
                 .into(imageView)
         } else {
