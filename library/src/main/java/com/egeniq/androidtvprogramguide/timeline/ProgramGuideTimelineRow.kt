@@ -17,11 +17,13 @@
 package com.egeniq.androidtvprogramguide.timeline
 
 import android.content.Context
+import android.os.Build
 import android.os.Parcel
 import android.os.Parcelable
 import android.util.AttributeSet
-import android.view.View
+import androidx.annotation.RequiresApi
 import kotlin.math.abs
+
 
 class ProgramGuideTimelineRow @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         ProgramGuideTimelineGridView(context, attrs, defStyle) {
@@ -93,8 +95,13 @@ class ProgramGuideTimelineRow @JvmOverloads constructor(context: Context, attrs:
 
         constructor(superState: Parcelable?) : super(superState)
 
-        private constructor(`in`: Parcel) : super(`in`) {
-            this.scrollPosition = `in`.readInt()
+        private constructor(source: Parcel) : super(source) {
+            this.scrollPosition = source.readInt()
+        }
+
+        @RequiresApi(Build.VERSION_CODES.N)
+        private constructor(source: Parcel, loader: ClassLoader?) : super(source, loader) {
+            this.scrollPosition = source.readInt()
         }
 
         override fun writeToParcel(out: Parcel, flags: Int) {
@@ -105,9 +112,13 @@ class ProgramGuideTimelineRow @JvmOverloads constructor(context: Context, attrs:
         companion object {
             @Suppress("unused")
             @JvmField
-            val CREATOR: Parcelable.Creator<SavedState> = object : Parcelable.Creator<SavedState> {
-                override fun createFromParcel(`in`: Parcel): SavedState {
-                    return SavedState(`in`)
+            val CREATOR: Parcelable.Creator<SavedState> = object : Parcelable.ClassLoaderCreator<SavedState> {
+                override fun createFromParcel(source: Parcel): SavedState {
+                    return SavedState(source)
+                }
+
+                override fun createFromParcel(source: Parcel, loader: ClassLoader?): SavedState {
+                    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) SavedState(source, loader) else SavedState(source)
                 }
 
                 override fun newArray(size: Int): Array<SavedState?> {
