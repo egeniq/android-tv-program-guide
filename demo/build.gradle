@@ -12,6 +12,14 @@ android {
         versionName "1.0"
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -23,14 +31,14 @@ android {
 dependencies {
     implementation project(":library")
 
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
     implementation 'androidx.leanback:leanback:1.0.0'
     implementation 'androidx.appcompat:appcompat:1.1.0'
 
-    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
-    implementation 'io.reactivex.rxjava2:rxjava:2.2.16'
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
+    implementation 'io.reactivex.rxjava3:rxjava:3.0.0'
 
 
-    implementation 'com.github.bumptech.glide:glide:4.10.0'
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
 }

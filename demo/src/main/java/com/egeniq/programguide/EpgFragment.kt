@@ -14,9 +14,9 @@ import com.egeniq.androidtvprogramguide.ProgramGuideFragment
 import com.egeniq.androidtvprogramguide.R
 import com.egeniq.androidtvprogramguide.entity.ProgramGuideChannel
 import com.egeniq.androidtvprogramguide.entity.ProgramGuideSchedule
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
 import org.threeten.bp.ZoneOffset
@@ -49,14 +49,14 @@ class EpgFragment : ProgramGuideFragment<EpgFragment.SimpleProgram>() {
         val metadata: String
     )
 
-    override fun onScheduleClicked(schedule: ProgramGuideSchedule<SimpleProgram>) {
-        val innerSchedule = schedule.program
+    override fun onScheduleClicked(programGuideSchedule: ProgramGuideSchedule<SimpleProgram>) {
+        val innerSchedule = programGuideSchedule.program
         if (innerSchedule == null) {
             // If this happens, then our data source gives partial info
             Log.w(TAG, "Unable to open schedule: $innerSchedule")
             return
         }
-        if (schedule.isCurrentProgram) {
+        if (programGuideSchedule.isCurrentProgram) {
             Toast.makeText(context, "Open live player", Toast.LENGTH_LONG).show()
         } else {
             Toast.makeText(context, "Open detail page", Toast.LENGTH_LONG).show()
@@ -133,7 +133,7 @@ class EpgFragment : ProgramGuideFragment<EpgFragment.SimpleProgram>() {
                 val endTime = if (nextTime.isBefore(MAX_CHANNEL_END_TIME)) randomTimeBetween(nextTime, MAX_CHANNEL_END_TIME) else MAX_CHANNEL_END_TIME
                 val finalSchedule = createSchedule(channel, showNames.random(), nextTime, endTime)
                 scheduleList.add(finalSchedule)
-                channelMap.put(channel.id, scheduleList)
+                channelMap[channel.id] = scheduleList
             }
             return@fromCallable Pair(channels, channelMap)
         }.delay(1, TimeUnit.SECONDS)

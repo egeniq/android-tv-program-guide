@@ -1,6 +1,10 @@
 # Changelog
 ===========
 
+### 2019-02-10
+
+* Fixed a bug where focus would be lost sometimes when switching between days.
+
 ### 2019-12-20
 
 * Fixed a crash in the demo, which was because of a missing `AndroidThreeTen.init()`.
