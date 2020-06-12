@@ -357,7 +357,7 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
      */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (savedInstanceState == null && !created) {
+        if ((savedInstanceState == null && !created) || currentState != State.Content) {
             created = true
             // Only get data when fragment is created first time, not recreated from backstack
             requestRefresh()
@@ -369,6 +369,7 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
             updateCurrentTimeIndicator()
             updateTimeOfDayFilter()
             didScrollToBestProgramme = false
+            setState(State.Content)
         }
     }
 
