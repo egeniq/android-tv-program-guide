@@ -211,8 +211,15 @@ class ProgramGuideManager<T> {
         setTimeRange(startUtcMillis, startUtcMillis + viewPortWidth)
     }
 
-    internal fun jumpTo(timeMillis: Long) {
-        shiftTime(timeMillis - fromUtcMillis)
+    /**
+     * Jumps to a specific position.
+     * @param timeMillis The time in milliseconds to jump to.
+     * @return True if the time was shifted. False if not change was triggered (time was the same as before).
+     */
+    internal fun jumpTo(timeMillis: Long) : Boolean {
+        val timeShift = timeMillis - fromUtcMillis
+        shiftTime(timeShift)
+        return timeShift != 0L
     }
 
     /** Shifts the time range by the given time. Also makes the guide scroll the views.  */

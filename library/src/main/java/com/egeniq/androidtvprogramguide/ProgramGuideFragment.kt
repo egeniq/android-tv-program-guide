@@ -745,7 +745,9 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
                 Log.w(TAG, "Can't scroll to current program because schedule not found.")
             } else {
                 Log.i(TAG, "Scrolling to ${currentProgram.displayTitle}, started at ${currentProgram.startsAtMillis}")
-                programGuideManager.jumpTo(currentProgram.startsAtMillis)
+                if (!programGuideManager.jumpTo(currentProgram.startsAtMillis)) {
+                    programGuideGrid.requestFocus()
+                }
             }
         } else {
             // The day is not today.
@@ -758,7 +760,9 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
             }
             val scrollToMillis =
                 timelineDate.withHour(scrollToHour).truncatedTo(ChronoUnit.HOURS).toEpochSecond() * 1000
-            programGuideManager.jumpTo(scrollToMillis)
+            if (programGuideManager.jumpTo(scrollToMillis)) {
+                programGuideGrid.requestFocus()
+            }
         }
     }
 
