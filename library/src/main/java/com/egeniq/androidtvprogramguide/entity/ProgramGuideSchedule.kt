@@ -19,6 +19,15 @@ package com.egeniq.androidtvprogramguide.entity
 import com.egeniq.androidtvprogramguide.util.ProgramGuideUtil
 import org.threeten.bp.Instant
 
+/**
+ * This class represents a programme in the EPG.
+ * The program you associate with it can be your own class where you put the relevant values.
+ * The ID should be unique across all schedules used in this app.
+ * The start and end time are defined in UTC milliseconds. Overlapping times (within one channel) are not allowed
+ * and will be corrected by the manager.
+ * Is clickable defines if the user can click on this schedule, and so will trigger onScheduleClicked(schedule).
+ * The displayTitle property is the string which is visible to the user in the EPG.
+ */
 data class ProgramGuideSchedule<T>(
         val id: Long,
         val startsAtMillis: Long,
@@ -28,6 +37,10 @@ data class ProgramGuideSchedule<T>(
         val displayTitle: String?,
         val program: T?) {
 
+    /**
+     * Used internally. We make some fixes and adjustments to the times in the program manager,
+     * but for consistency we keep the original times here as well.
+     */
     data class OriginalTimes(
             val startsAtMillis: Long,
             val endsAtMillis: Long

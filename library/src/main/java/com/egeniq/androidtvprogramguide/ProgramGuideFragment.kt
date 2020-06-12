@@ -359,7 +359,8 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         super.onViewCreated(view, savedInstanceState)
         if ((savedInstanceState == null && !created) || currentState != State.Content) {
             created = true
-            // Only get data when fragment is created first time, not recreated from backstack
+            // Only get data when fragment is created first time, not recreated from backstack.
+            // Also when the content was not loaded yet before.
             requestRefresh()
         } else {
             setTopMarginVisibility(isTopMenuVisible())
