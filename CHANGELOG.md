@@ -14,3 +14,4 @@
 
 * Added a method to scroll to a specific channel: `ProgramGuideFragment.scrollToChannelWithId(channelId)`
 * Fixed an issue where the EPG fragment would be stuck on loading state when the fragment gets restored.
+* Fixed an issue where scrolling to the live position would not put focus on the programme if no actual scroll was done.
