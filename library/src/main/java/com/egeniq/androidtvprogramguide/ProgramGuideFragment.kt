@@ -730,12 +730,17 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
     /**
      * After laying out all the views inside the grid, we want to scroll
      * to the most relevant programme to the user. This function takes care of that.
+     *
+     * @param useTimeOfDayFilter If the time of day filter was used to do the scroll. In this case
+     * the scroll will be done to a hardcoded time, instead of the current live programme.
+     * @param specificChannelId The specific channel ID to scroll. Will be the first channel in
+     * the list of not specified.
      */
-    private fun autoScrollToBestProgramme(useTimeOfDayFilter: Boolean = false) {
+    private fun autoScrollToBestProgramme(useTimeOfDayFilter: Boolean = false, specificChannelId: String? = null) {
         val nowMillis = Instant.now().toEpochMilli()
         // If the current time is within the managed frame, jump to it.
         if (!useTimeOfDayFilter && programGuideManager.getStartTime() <= nowMillis && nowMillis <= programGuideManager.getEndTime()) {
-            val currentProgram = programGuideManager.getCurrentProgram()
+            val currentProgram = programGuideManager.getCurrentProgram(specificChannelId)
             if (currentProgram == null) {
                 Log.w(TAG, "Can't scroll to current program because schedule not found.")
             } else {
@@ -754,6 +759,20 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
             val scrollToMillis =
                 timelineDate.withHour(scrollToHour).truncatedTo(ChronoUnit.HOURS).toEpochSecond() * 1000
             programGuideManager.jumpTo(scrollToMillis)
+        }
+    }
+
+    /**
+     * Scrolls to a channel with a specific ID vertically and horizontally. Highlights the current
+     * program with focus after the scroll.
+     *
+     * @param channelId The channel ID to scroll to.
+     */
+    fun scrollToChannelWithId(channelId: String) {
+        val index = programGuideManager.getChannelIndex(channelId)
+        if (index != null) {
+            programGuideGrid.smoothScrollToPosition(index)
+            autoScrollToBestProgramme(useTimeOfDayFilter = false, specificChannelId = channelId)
         }
     }
 }

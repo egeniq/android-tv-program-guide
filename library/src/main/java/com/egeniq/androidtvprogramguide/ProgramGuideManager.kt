@@ -304,11 +304,12 @@ class ProgramGuideManager<T> {
         } else channels[channelIndex]
     }
 
-    fun getCurrentProgram(): ProgramGuideSchedule<T>? {
+    fun getCurrentProgram(specificChannelId: String? = null): ProgramGuideSchedule<T>? {
         val firstChannel = channels.firstOrNull() ?: return null
         val now = FixedZonedDateTime.now().toEpochSecond() * 1000
         var bestMatch: ProgramGuideSchedule<T>? = null
-        channelEntriesMap[firstChannel.id]?.let {
+        val channelId = specificChannelId ?: firstChannel.id
+        channelEntriesMap[channelId]?.let {
             it.forEach { schedule ->
                 if (schedule.startsAtMillis < now) {
                     bestMatch = schedule
@@ -319,6 +320,15 @@ class ProgramGuideManager<T> {
             }
         }
         return bestMatch
+    }
+
+    fun getChannelIndex(channelId: String): Int? {
+        val index = channels.indexOfFirst { it.id == channelId }
+        if (index < 0) {
+            return null
+        } else {
+            return index
+        }
     }
 
     @MainThread
