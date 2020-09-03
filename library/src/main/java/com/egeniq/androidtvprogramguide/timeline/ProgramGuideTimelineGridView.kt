@@ -19,6 +19,7 @@ package com.egeniq.androidtvprogramguide.timeline
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -29,7 +30,7 @@ open class ProgramGuideTimelineGridView @JvmOverloads constructor(
 ) : RecyclerView(context, attrs, defStyle) {
 
     init {
-
+        layoutDirection = LAYOUT_DIRECTION_LTR
         layoutManager = object : LinearLayoutManager(context, HORIZONTAL, false) {
             override fun onRequestChildFocus(
                 parent: RecyclerView,

@@ -28,18 +28,18 @@
         style="@style/ProgramGuide.Button.JumpToLive"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/programguide_filter_spacing"
+        android:layout_marginStart="@dimen/programguide_filter_spacing"
         android:text="@string/programguide_button_jump_to_live"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/programguide_time_row"
-        app:layout_constraintLeft_toRightOf="@id/programguide_time_of_day_filter"
+        app:layout_constraintStart_toEndOf="@id/programguide_time_of_day_filter"
         app:layout_constraintTop_toTopOf="@id/programguide_top_margin" />
 
     <Space
         android:id="@+id/programguide_menu_visible_margin"
         android:layout_width="0dp"
         android:layout_height="@dimen/programguide_page_top_margin_menu_visible"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Space
@@ -54,7 +54,7 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/programguide_current_time_indicator_top_height"
         app:layout_constraintBottom_toTopOf="@id/background"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <View
         android:id="@+id/bottom_detail"
@@ -62,17 +62,17 @@
         android:layout_height="@dimen/programguide_bottom_detail_height"
         android:background="@color/programguide_footer_background"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageView
         android:id="@+id/programguide_detail_image"
         style="@style/ProgramGuide.Image.Detail"
-        android:layout_marginLeft="@dimen/programguide_page_left_padding"
+        android:layout_marginStart="@dimen/programguide_page_left_padding"
         android:background="@drawable/programguide_tile_placeholder"
         android:src="@drawable/programguide_icon_placeholder"
         app:layout_constraintBottom_toBottomOf="@id/bottom_detail"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/bottom_detail" />
 
     <TextView
@@ -80,7 +80,9 @@
         style="@style/ProgramGuide.Text.Detail.Title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toRightOf="@id/programguide_detail_image"
+        android:gravity="start"
+        app:layout_constraintStart_toEndOf="@id/programguide_detail_image"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/programguide_detail_image"
         tools:text="NPO Politiek" />
 
@@ -89,7 +91,8 @@
         style="@style/ProgramGuide.Text.Detail.Metadata"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="@id/programguide_detail_title"
+        android:gravity="start"
+        app:layout_constraintStart_toStartOf="@id/programguide_detail_title"
         app:layout_constraintTop_toBottomOf="@id/programguide_detail_title"
         tools:text="EenVandaag • Wo 30 jan 20:00 • AVROTROS" />
 
@@ -97,9 +100,10 @@
         android:id="@+id/programguide_detail_description"
         style="@style/ProgramGuide.Text.Detail.Description"
         android:layout_width="0dp"
+        android:gravity="start"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="@id/programguide_detail_title"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="@id/programguide_detail_title"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/programguide_detail_metadata"
         tools:text="This is the description of the item.\nLine 2\nLine 3\nLine 4\nLine 5\nLine 6" />
 
@@ -107,7 +111,7 @@
         android:id="@+id/programguide_top_margin"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/programguide_menu_visible_margin" />
 
     <View
@@ -116,8 +120,8 @@
         android:layout_height="0dp"
         android:background="@color/programguide_content_background"
         app:layout_constraintBottom_toTopOf="@id/bottom_detail"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/programguide_time_row" />
 
     <View
@@ -128,7 +132,7 @@
         android:focusableInTouchMode="true"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ViewAnimator
         android:id="@+id/programguide_content_animator"
@@ -137,8 +141,8 @@
         android:inAnimation="@android:anim/fade_in"
         android:outAnimation="@android:anim/fade_out"
         app:layout_constraintBottom_toBottomOf="@id/background"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/background">
 
         <!-- Loading state -->
@@ -163,12 +167,12 @@
 
     </ViewAnimator>
 
-    <androidx.constraintlayout.widget.Guideline
+    <Space
         android:id="@+id/left_channel_guideline"
-        android:layout_width="0dp"
+        android:layout_width="@dimen/programguide_channel_column_width"
         android:layout_height="0dp"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="@dimen/programguide_channel_column_width" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent" />
 
     <com.egeniq.androidtvprogramguide.timeline.ProgramGuideTimelineRow
         android:id="@+id/programguide_time_row"
@@ -189,9 +193,9 @@
         layout="@layout/programguide_item_filter"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/programguide_page_left_padding"
+        android:layout_marginStart="@dimen/programguide_page_left_padding"
         app:layout_constraintBottom_toTopOf="@id/programguide_time_row"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/programguide_top_margin" />
 
     <include
@@ -199,9 +203,9 @@
         layout="@layout/programguide_item_filter"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/programguide_filter_spacing"
+        android:layout_marginStart="@dimen/programguide_filter_spacing"
         app:layout_constraintBottom_toTopOf="@id/programguide_time_row"
-        app:layout_constraintLeft_toRightOf="@id/programguide_day_filter"
+        app:layout_constraintStart_toEndOf="@id/programguide_day_filter"
         app:layout_constraintTop_toTopOf="@id/programguide_top_margin" />
 
     <include
@@ -233,6 +237,6 @@
         android:focusableInTouchMode="true"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -70,20 +70,15 @@ class ProgramGuideRowGridView @JvmOverloads constructor(context: Context, attrs:
         updateChildVisibleArea()
     }
 
-    // Call this API after RTL is resolved. (i.e. View is measured.)
+    // Timelines are all left-to-right, even on an RTL device.
+    // So left and right are not reversed in any case.
     private fun isDirectionStart(direction: Int): Boolean {
-        return if (layoutDirection == View.LAYOUT_DIRECTION_LTR)
-            direction == View.FOCUS_LEFT
-        else
-            direction == View.FOCUS_RIGHT
+        return direction == View.FOCUS_LEFT
     }
 
     // Call this API after RTL is resolved. (i.e. View is measured.)
     private fun isDirectionEnd(direction: Int): Boolean {
-        return if (layoutDirection == View.LAYOUT_DIRECTION_LTR)
-            direction == View.FOCUS_RIGHT
-        else
-            direction == View.FOCUS_LEFT
+        return direction == View.FOCUS_RIGHT
     }
 
     override fun focusSearch(focused: View, direction: Int): View? {

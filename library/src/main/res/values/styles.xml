@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2020, Egeniq
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,14 +31,18 @@
     <style name="ProgramGuide.Text.Detail.Title" parent="">
         <item name="android:fontFamily">@font/open_sans_bold</item>
         <item name="android:textSize">20sp</item>
+        <item name="android:textDirection">locale</item>
+        <item name="android:textAlignment">gravity</item>
         <item name="android:textColor">@color/programguide_detail_text_color</item>
         <item name="android:includeFontPadding">false</item>
-        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginStart">16dp</item>
     </style>
 
     <style name="ProgramGuide.Text.Detail.Metadata" parent="">
         <item name="android:fontFamily">@font/open_sans_regular</item>
         <item name="android:textColor">@color/programguide_detail_text_color</item>
+        <item name="android:textDirection">locale</item>
+        <item name="android:textAlignment">gravity</item>
         <item name="android:layout_marginTop">6dp</item>
         <item name="android:textSize">13sp</item>
     </style>
@@ -48,9 +51,11 @@
         <item name="android:fontFamily">@font/open_sans_regular</item>
         <item name="android:textSize">13sp</item>
         <item name="android:textColor">@color/programguide_detail_text_color</item>
+        <item name="android:textDirection">locale</item>
+        <item name="android:textAlignment">gravity</item>
         <item name="android:maxLines">5</item>
         <item name="android:ellipsize">end</item>
-        <item name="android:layout_marginRight">96dp</item>
+        <item name="android:layout_marginEnd">96dp</item>
         <item name="android:layout_marginTop">6dp</item>
     </style>
 
