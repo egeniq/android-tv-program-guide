@@ -28,14 +28,14 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/programguide_program_row_height_with_empty_space"
         android:clipToPadding="false"
-        android:paddingLeft="@dimen/programguide_channel_column_width"
+        android:paddingStart="@dimen/programguide_channel_column_width"
         tools:ignore="RtlSymmetry" />
 
     <include
         layout="@layout/programguide_item_channel"
         android:layout_width="@dimen/programguide_channel_column_width"
         android:layout_height="@dimen/programguide_program_row_height_with_empty_space"
-        android:layout_gravity="left" />
+        android:layout_gravity="start" />
 
 
 </FrameLayout>

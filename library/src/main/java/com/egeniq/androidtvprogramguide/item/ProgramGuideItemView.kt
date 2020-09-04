@@ -32,11 +32,16 @@ import kotlin.math.min
 class ProgramGuideItemView<T> : FrameLayout {
     constructor(context: Context) : this(context, null)
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    )
 
     var schedule: ProgramGuideSchedule<T>? = null
 
-    private val staticItemPadding: Int = resources.getDimensionPixelOffset(R.dimen.programguide_item_padding)
+    private val staticItemPadding: Int =
+        resources.getDimensionPixelOffset(R.dimen.programguide_item_padding)
 
     private var itemTextWidth: Int = 0
     private var maxWidthForRipple: Int = 0
@@ -52,13 +57,16 @@ class ProgramGuideItemView<T> : FrameLayout {
         progressView = findViewById(R.id.progress)
     }
 
-    fun setValues(scheduleItem: ProgramGuideSchedule<T>, fromUtcMillis: Long, toUtcMillis: Long,
-                  gapTitle: String, displayProgress: Boolean) {
+    fun setValues(
+        scheduleItem: ProgramGuideSchedule<T>, fromUtcMillis: Long, toUtcMillis: Long,
+        gapTitle: String, displayProgress: Boolean
+    ) {
         schedule = scheduleItem
         val layoutParams = layoutParams
         if (layoutParams != null) {
             val spacing = resources.getDimensionPixelSize(R.dimen.programguide_item_spacing)
-            layoutParams.width = scheduleItem.width - 2 * spacing // Here we subtract the spacing, otherwise the calculations will be wrong at other places
+            layoutParams.width =
+                scheduleItem.width - 2 * spacing // Here we subtract the spacing, otherwise the calculations will be wrong at other places
             setLayoutParams(layoutParams)
         }
         var title = schedule?.displayTitle
@@ -70,18 +78,26 @@ class ProgramGuideItemView<T> : FrameLayout {
             setBackgroundResource(R.drawable.programguide_item_program_background)
             isClickable = scheduleItem.isClickable
         }
-        title = if (title?.isEmpty() == true) resources.getString(R.string.programguide_title_no_program) else title
+        title =
+            if (title?.isEmpty() == true) resources.getString(R.string.programguide_title_no_program) else title
 
         updateText(title)
-        initProgress(ProgramGuideUtil.convertMillisToPixel(startMillis = scheduleItem.startsAtMillis, endMillis = scheduleItem.endsAtMillis))
+        initProgress(
+            ProgramGuideUtil.convertMillisToPixel(
+                startMillis = scheduleItem.startsAtMillis,
+                endMillis = scheduleItem.endsAtMillis
+            )
+        )
         if (displayProgress) {
             updateProgress(System.currentTimeMillis())
         } else {
             progressView.visibility = View.GONE
         }
 
-        titleView.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
-            MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED))
+        titleView.measure(
+            MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
+            MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+        )
         itemTextWidth = titleView.measuredWidth - titleView.paddingLeft - titleView.paddingRight
         // Maximum width for us to use a ripple
         maxWidthForRipple = ProgramGuideUtil.convertMillisToPixel(fromUtcMillis, toUtcMillis)
@@ -102,7 +118,8 @@ class ProgramGuideItemView<T> : FrameLayout {
                     visibility = View.GONE
                 } else {
                     visibility = View.VISIBLE
-                    progressView.progress = ProgramGuideUtil.convertMillisToPixel(it.startsAtMillis, now)
+                    progressView.progress =
+                        ProgramGuideUtil.convertMillisToPixel(it.startsAtMillis, now)
                 }
             }
         }
@@ -111,7 +128,17 @@ class ProgramGuideItemView<T> : FrameLayout {
     /** Update programItemView to handle alignments of text. */
     fun updateVisibleArea() {
         val parentView = parent as View
-        layoutVisibleArea(parentView.left + parentView.paddingLeft - left, right - parentView.right)
+        if (layoutDirection == LAYOUT_DIRECTION_LTR) {
+            layoutVisibleArea(
+                parentView.left + parentView.paddingStart - left,
+                right - parentView.right
+            )
+        } else {
+            layoutVisibleArea(
+                parentView.left - left,
+                right - parentView.right + parentView.paddingStart
+            )
+        }
     }
 
     /**
@@ -123,25 +150,44 @@ class ProgramGuideItemView<T> : FrameLayout {
      * 2. Try showing whole text in visible area by placing and wrapping text, but do not wrap text less than 30min.
      * 3. Episode title is visible only if title isn't multi-line.
      *
-     * @param startOffset Offset of the start position from the enclosing view's start position.
-     * @param endOffset Offset of the end position from the enclosing view's end position.
+     * @param leftOffset Amount of pixels the view sticks out on the left side of the screen. If it is negative, it does not stick out.
+     * @param rightOffset Amount of pixels the view sticks out on the right side of the screen. If it is negative, it does not stick out.
      */
-    private fun layoutVisibleArea(startOffset: Int, endOffset: Int) {
+    private fun layoutVisibleArea(leftOffset: Int, rightOffset: Int) {
         val width = schedule?.width ?: 0
-        var startPadding = max(0, startOffset)
-        var endPadding = max(0, endOffset)
+        var leftPadding = max(0, leftOffset)
+        var rightPadding = max(0, rightOffset)
         val minWidth = min(width, itemTextWidth + 2 * staticItemPadding)
-        if (startPadding > 0 && width - startPadding < minWidth) {
-            startPadding = max(0, width - minWidth)
+        if (leftPadding > 0 && width - leftPadding < minWidth) {
+            leftPadding = max(0, width - minWidth)
         }
-        if (endPadding > 0 && width - endPadding < minWidth) {
-            endPadding = max(0, width - minWidth)
+        if (rightPadding > 0 && width - rightPadding < minWidth) {
+            rightPadding = max(0, width - minWidth)
         }
 
-        if (startPadding + staticItemPadding != paddingStart || endPadding + staticItemPadding != paddingEnd) {
-            preventParentRelayout = true // The size of this view is kept, no need to tell parent.
-            titleView.setPaddingRelative(startPadding + staticItemPadding, 0, endPadding + staticItemPadding, 0)
-            preventParentRelayout = false
+        if (parent.layoutDirection == LAYOUT_DIRECTION_LTR) {
+            if (leftPadding + staticItemPadding != paddingStart || rightPadding + staticItemPadding != paddingEnd) {
+                // The size of this view is kept, no need to tell parent.
+                preventParentRelayout = true
+
+                titleView.setPaddingRelative(
+                    leftPadding + staticItemPadding,
+                    0,
+                    rightPadding + staticItemPadding,
+                    0
+                )
+                preventParentRelayout = false
+            }
+        } else {
+            if (leftPadding + staticItemPadding != paddingEnd || rightPadding + staticItemPadding != paddingStart) {
+                // In this case, we need to tell the parent to do a relayout, RTL is a bit more complicated, it seems.
+                titleView.setPaddingRelative(
+                    rightPadding + staticItemPadding,
+                    0,
+                    leftPadding + staticItemPadding,
+                    0
+                )
+            }
         }
     }
 

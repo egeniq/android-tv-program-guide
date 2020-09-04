@@ -30,7 +30,6 @@ open class ProgramGuideTimelineGridView @JvmOverloads constructor(
 ) : RecyclerView(context, attrs, defStyle) {
 
     init {
-        layoutDirection = LAYOUT_DIRECTION_LTR
         layoutManager = object : LinearLayoutManager(context, HORIZONTAL, false) {
             override fun onRequestChildFocus(
                 parent: RecyclerView,

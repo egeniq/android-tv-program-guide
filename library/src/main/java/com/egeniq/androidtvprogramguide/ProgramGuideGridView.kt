@@ -38,7 +38,7 @@ class ProgramGuideGridView<T>(context: Context, attrs: AttributeSet?, defStyle: 
 
     companion object {
         private const val INVALID_INDEX = -1
-        private val FOCUS_AREA_RIGHT_MARGIN_MILLIS = TimeUnit.MINUTES.toMillis(15)
+        private val FOCUS_AREA_SIDE_MARGIN_MILLIS = TimeUnit.MINUTES.toMillis(15)
         private val TAG : String = ProgramGuideGridView::class.java.name
     }
 
@@ -82,7 +82,7 @@ class ProgramGuideGridView<T>(context: Context, attrs: AttributeSet?, defStyle: 
 
     var featureFocusWrapAround = true
 
-    var overlapLeft = 0
+    var overlapStart = 0
 
     private val programManagerListener = object : ProgramGuideManager.Listener {
 
@@ -160,6 +160,9 @@ class ProgramGuideGridView<T>(context: Context, attrs: AttributeSet?, defStyle: 
 
     /** Returns the currently focused item's horizontal range.  */
     internal fun getFocusRange(): Range<Int> {
+        if (focusRangeLeft == Int.MIN_VALUE && focusRangeRight == Int.MAX_VALUE) {
+            clearUpDownFocusState(null)
+        }
         return Range(focusRangeLeft, focusRangeRight)
     }
 
@@ -188,8 +191,18 @@ class ProgramGuideGridView<T>(context: Context, attrs: AttributeSet?, defStyle: 
 
     private fun clearUpDownFocusState(focus: View?) {
         lastUpDownDirection = 0
-        focusRangeLeft = overlapLeft
-        focusRangeRight = getRightMostFocusablePosition()
+        if (layoutDirection == LAYOUT_DIRECTION_LTR) {
+            focusRangeLeft = overlapStart
+            focusRangeRight = getRightMostFocusablePosition()
+        } else {
+            focusRangeLeft = getLeftMostFocusablePosition()
+            if (!getGlobalVisibleRect(tempRect)) {
+                focusRangeRight = Int.MAX_VALUE
+            } else {
+                focusRangeRight = tempRect.width() - overlapStart
+            }
+
+        }
         nextFocusByUpDown = null
         // If focus is not a program item, drop focus to the current program when back to the grid
         // Only used if the feature flag is enabled
@@ -199,7 +212,13 @@ class ProgramGuideGridView<T>(context: Context, attrs: AttributeSet?, defStyle: 
     private fun getRightMostFocusablePosition(): Int {
         return if (!getGlobalVisibleRect(tempRect)) {
             Integer.MAX_VALUE
-        } else tempRect.right - ProgramGuideUtil.convertMillisToPixel(FOCUS_AREA_RIGHT_MARGIN_MILLIS)
+        } else tempRect.right - ProgramGuideUtil.convertMillisToPixel(FOCUS_AREA_SIDE_MARGIN_MILLIS)
+    }
+
+    private fun getLeftMostFocusablePosition(): Int {
+        return if (!getGlobalVisibleRect(tempRect)) {
+            Integer.MIN_VALUE
+        } else tempRect.left + ProgramGuideUtil.convertMillisToPixel(FOCUS_AREA_SIDE_MARGIN_MILLIS)
     }
 
     private fun focusFind(focused: View, direction: Int): View? {

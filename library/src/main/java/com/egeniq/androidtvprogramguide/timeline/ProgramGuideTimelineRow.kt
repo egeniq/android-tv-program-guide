@@ -47,9 +47,17 @@ class ProgramGuideTimelineRow @JvmOverloads constructor(context: Context, attrs:
     fun scrollTo(scrollOffset: Int, smoothScroll: Boolean) {
         val dx = scrollOffset - currentScrollOffset
         if (smoothScroll) {
-            smoothScrollBy(dx, 0)
+            if (layoutDirection == LAYOUT_DIRECTION_LTR) {
+                smoothScrollBy(dx, 0)
+            } else {
+                smoothScrollBy(-dx, 0)
+            }
         } else {
-            scrollBy(dx, 0)
+            if (layoutDirection == LAYOUT_DIRECTION_LTR) {
+                scrollBy(dx, 0)
+            } else {
+                scrollBy(-dx, 0)
+            }
         }
     }
 

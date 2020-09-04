@@ -70,15 +70,20 @@ class ProgramGuideRowGridView @JvmOverloads constructor(context: Context, attrs:
         updateChildVisibleArea()
     }
 
-    // Timelines are all left-to-right, even on an RTL device.
-    // So left and right are not reversed in any case.
+    // Call this API after RTL is resolved. (i.e. View is measured.)
     private fun isDirectionStart(direction: Int): Boolean {
-        return direction == View.FOCUS_LEFT
+        return if (layoutDirection == View.LAYOUT_DIRECTION_LTR)
+            direction == View.FOCUS_LEFT
+        else
+            direction == View.FOCUS_RIGHT
     }
 
     // Call this API after RTL is resolved. (i.e. View is measured.)
     private fun isDirectionEnd(direction: Int): Boolean {
-        return direction == View.FOCUS_RIGHT
+        return if (layoutDirection == View.LAYOUT_DIRECTION_LTR)
+            direction == View.FOCUS_RIGHT
+        else
+            direction == View.FOCUS_LEFT
     }
 
     override fun focusSearch(focused: View, direction: Int): View? {
@@ -97,7 +102,7 @@ class ProgramGuideRowGridView @JvmOverloads constructor(context: Context, attrs:
             }
         } else if (isDirectionEnd(direction) || direction == View.FOCUS_FORWARD) {
             if (focusedEntry.endsAtMillis > toMillis) {
-                // The current entry ends outside of the view; Scroll to the right.
+                // The current entry ends outside of the view; Scroll to the right (or left, if RTL).
                 scrollByTime(ONE_HOUR_MILLIS)
                 return focused
             }
@@ -119,14 +124,14 @@ class ProgramGuideRowGridView @JvmOverloads constructor(context: Context, attrs:
 
         if (isDirectionStart(direction) || direction == View.FOCUS_BACKWARD) {
             if (targetEntry.startsAtMillis < fromMillis && targetEntry.endsAtMillis < fromMillis + HALF_HOUR_MILLIS) {
-                // The target entry starts outside the view; Align or scroll to the left.
+                // The target entry starts outside the view; Align or scroll to the left (or right, on RTL).
                 scrollByTime(
                         max(-ONE_HOUR_MILLIS, targetEntry.startsAtMillis - fromMillis)
                 )
             }
         } else if (isDirectionEnd(direction) || direction == View.FOCUS_FORWARD) {
             if (targetEntry.startsAtMillis > fromMillis + ONE_HOUR_MILLIS + HALF_HOUR_MILLIS) {
-                // The target entry starts outside the view; Align or scroll to the right.
+                // The target entry starts outside the view; Align or scroll to the right (or left, on RTL).
                 scrollByTime(
                         min(
                                 ONE_HOUR_MILLIS,
@@ -205,7 +210,13 @@ class ProgramGuideRowGridView @JvmOverloads constructor(context: Context, attrs:
         val leftEdge = child.left
         val rightEdge = child.left + child.width
         val viewPosition = layoutManager?.getPosition(child)
-        if (leftEdge >= programGuideHolder.programGuideGrid.getFocusRange().lower || rightEdge >= programGuideHolder.programGuideGrid.getFocusRange().lower + minimumStickOutWidth) {
+
+        if (layoutDirection == LAYOUT_DIRECTION_LTR && (leftEdge >= programGuideHolder.programGuideGrid.getFocusRange().lower ||
+            rightEdge >= programGuideHolder.programGuideGrid.getFocusRange().lower + minimumStickOutWidth)) {
+            return child
+        } else if (layoutDirection == LAYOUT_DIRECTION_RTL && (rightEdge <= programGuideHolder.programGuideGrid.getFocusRange().upper ||
+            leftEdge <= programGuideHolder.programGuideGrid.getFocusRange().upper - minimumStickOutWidth)) {
+            // RTL mode
             return child
         }
 

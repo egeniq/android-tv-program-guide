@@ -46,7 +46,7 @@
         android:id="@+id/programguide_timeline_row_negative_margin"
         android:layout_width="@dimen/programguide_time_row_negative_margin"
         android:layout_height="0dp"
-        app:layout_constraintRight_toRightOf="@id/left_channel_guideline"
+        app:layout_constraintEnd_toEndOf="@id/left_channel_guideline"
         app:layout_constraintTop_toTopOf="@id/programguide_top_margin" />
 
     <Space
@@ -172,7 +172,7 @@
         android:layout_width="@dimen/programguide_channel_column_width"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.egeniq.androidtvprogramguide.timeline.ProgramGuideTimelineRow
         android:id="@+id/programguide_time_row"
@@ -182,8 +182,8 @@
         android:alpha="0"
         android:fadingEdgeLength="20dp"
         android:requiresFadingEdge="horizontal"
-        app:layout_constraintLeft_toLeftOf="@id/programguide_timeline_row_negative_margin"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="@id/programguide_timeline_row_negative_margin"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/programguide_top_margin"
         tools:alpha="1"
         tools:listitem="@layout/programguide_item_time" />
@@ -213,8 +213,8 @@
         layout="@layout/programguide_item_time"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/programguide_time_row_height"
-        android:layout_marginLeft="@dimen/programguide_page_left_padding"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="@dimen/programguide_page_left_padding"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/programguide_time_row" />
 
     <include
@@ -222,10 +222,10 @@
         layout="@layout/programguide_item_time_indicator"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginLeft="@dimen/programguide_channel_column_width"
+        android:layout_marginStart="@dimen/programguide_channel_column_width"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/background"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/programguide_current_time_indicator_top_offset"
         tools:visibility="visible" />
 
