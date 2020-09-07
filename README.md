@@ -35,6 +35,11 @@ You will probably have to fork this project to modify it according to your speci
 For the same reason, a lot of features are not configurable, to keep the code simple. If you feel that
 we should still offer a package, feel free to open a ticket to discuss :)
 
+### Right-to-Left (RTL) layout direction
+
+This library supports RTL devices. When the layout direction is inverted, it will show the top and bottom widgets aligned to the right side,
+as well as the channel list, and the timeline will count up from right to left, so it will be inverted as well. If you don't wish to change the timeline,
+you can revert commit `d7ba2af7e5d82bc9751a66a1a2f491ea85bfe458`. 
 
 ### Support
 
