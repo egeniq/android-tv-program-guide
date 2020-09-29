@@ -39,7 +39,8 @@
     <color name="programguide_filter_background_focused">#40FFFFFF</color>
     <color name="programguide_filter_background_default">#00000000</color>
     <color name="programguide_filter_icon_color">#FFFFFF</color>
-    <color name="programguide_channel_item_background_color">#E0000000</color>
+    <color name="programguide_channel_item_background_color_default">#E0000000</color>
+    <color name="programguide_channel_item_background_color_selected">#F0303030</color>
     <color name="programguide_detail_text_color">#CCCCCC</color>
     <color name="programguide_button_focused">#1565c0</color>
     <color name="programguide_button_default">#707070</color>

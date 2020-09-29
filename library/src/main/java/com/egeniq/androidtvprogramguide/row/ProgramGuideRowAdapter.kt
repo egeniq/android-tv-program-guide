@@ -79,7 +79,7 @@ internal class ProgramGuideRowAdapter(
     }
 
     override fun onBindViewHolder(holder: ProgramRowViewHolder, position: Int) {
-        holder.onBind(position)
+        holder.onBind(position, programManager, programListAdapters, programGuideHolder)
     }
 
 
@@ -98,7 +98,7 @@ internal class ProgramGuideRowAdapter(
         // Do nothing
     }
 
-    internal inner class ProgramRowViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    internal class ProgramRowViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private val container: ViewGroup = itemView as ViewGroup
         private val rowGridView: ProgramGuideRowGridView
@@ -110,9 +110,18 @@ internal class ProgramGuideRowAdapter(
             rowGridView = container.findViewById(R.id.row)
             channelNameView = container.findViewById(R.id.programguide_channel_name)
             channelLogoView = container.findViewById(R.id.programguide_channel_logo)
+            val channelContainer = container.findViewById<ViewGroup>(R.id.programguide_channel_container)
+            channelContainer.viewTreeObserver.addOnGlobalFocusChangeListener { oldFocus, newFocus ->
+                channelContainer.isActivated = rowGridView.hasFocus()
+            }
         }
 
-        fun onBind(position: Int) {
+        fun onBind(
+            position: Int,
+            programManager: ProgramGuideManager<*>,
+            programListAdapters: List<RecyclerView.Adapter<*>>,
+            programGuideHolder: ProgramGuideHolder<*>
+        ) {
             onBindChannel(programManager.getChannel(position))
             rowGridView.swapAdapter(programListAdapters[position], true)
             rowGridView.setProgramGuideFragment(programGuideHolder)

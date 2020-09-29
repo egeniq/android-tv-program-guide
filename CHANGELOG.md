@@ -19,3 +19,8 @@
 ### 2020-09-07
 
 * Fixed issues with display on RTL devices.
+
+
+### 2020-09-29
+
+* Currently selected channel has a highlighted background now.

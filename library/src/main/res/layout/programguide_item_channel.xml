@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2020, Egeniq
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,14 +18,15 @@
      in order to support rounded corners. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/programguide_channel_container"
     android:layout_width="@dimen/programguide_channel_column_width"
     android:layout_height="@dimen/programguide_program_row_height_with_empty_space"
-    android:background="@color/programguide_channel_item_background_color"
+    android:background="@drawable/programguide_channel_item_background"
     android:paddingLeft="@dimen/programguide_page_left_padding">
 
     <TextView
-        style="@style/ProgramGuide.Text.Channel"
         android:id="@+id/programguide_channel_name"
+        style="@style/ProgramGuide.Text.Channel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="NPO Zappelin Xtra" />
