@@ -20,6 +20,7 @@ import android.annotation.SuppressLint
 import android.content.res.Resources
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -143,7 +144,7 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
     protected var currentDate: LocalDate = LocalDate.now()
         private set
 
-    private val progressUpdateHandler: Handler = Handler()
+    private val progressUpdateHandler: Handler = Handler(Looper.getMainLooper())
     private val progressUpdateRunnable: Runnable = object : Runnable {
         override fun run() {
             with(System.currentTimeMillis()) {
