@@ -3,7 +3,7 @@
 ### 2020-10-30
 
 * __NEW:__ Added a method to update a program in the grid. `ProgramGuideFragment.updateProgram(program)` can be used to update a pre-existing program with the same ID. You can update the title, the clickability and the underlying program data object. The demo was also updated with an example, it will append some text to the title if you click on a program.
-* __NEW:__ Programs in the past will now have a slightly darker background and text color. You can override these colors to change them, just search for `in_past` in `color.xml`
+* __NEW:__ Programs in the past will now have a slightly darker background and text color. You can override these colors to change them, just search for `in_past` in `colors.xml`
 * __NEW:__ You can now supply your own error message in State.Error, also added a style for the TextView for better customization.
 
 ### 2020-09-29
