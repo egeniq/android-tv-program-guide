@@ -885,7 +885,7 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
      * Updates the program everywhere, including the schedule grid.
      * This method requires that a program with the same ID exists (otherwise nothing will happen).
      *
-     * If there are multiple programs with the same ID, all of them will be updated.
+     * If there are multiple programs with the same ID, only the first one will be updated (you should have unique IDs!).
      *
      */
     fun updateProgram(program: ProgramGuideSchedule<T>) {
