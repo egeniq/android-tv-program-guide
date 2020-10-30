@@ -295,7 +295,7 @@ class ProgramGuideRowGridView @JvmOverloads constructor(context: Context, attrs:
         }
     }
 
-    private fun updateChildVisibleArea() {
+    internal fun updateChildVisibleArea() {
         for (i in 0 until childCount) {
             val child = getChildAt(i) as ProgramGuideItemView<*>
             if (left < child.right && child.left < right) {

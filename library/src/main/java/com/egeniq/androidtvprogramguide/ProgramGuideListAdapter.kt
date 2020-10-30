@@ -52,6 +52,16 @@ class ProgramGuideListAdapter<T>(res: Resources, private val programGuideFragmen
         }
     }
 
+    fun updateProgram(program: ProgramGuideSchedule<*>): Boolean {
+        for (position in 0 until itemCount) {
+            if (programGuideManager.getScheduleForChannelIdAndIndex(channelId, position).id == program.id) {
+                notifyItemChanged(position)
+                return true
+            }
+        }
+        return false
+    }
+
     override fun getItemCount(): Int {
         return programGuideManager.getSchedulesCount(channelId)
     }

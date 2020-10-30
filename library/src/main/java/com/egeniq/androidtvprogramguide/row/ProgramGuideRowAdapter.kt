@@ -30,6 +30,7 @@ import com.egeniq.androidtvprogramguide.ProgramGuideListAdapter
 import com.egeniq.androidtvprogramguide.ProgramGuideManager
 import com.egeniq.androidtvprogramguide.R
 import com.egeniq.androidtvprogramguide.entity.ProgramGuideChannel
+import com.egeniq.androidtvprogramguide.entity.ProgramGuideSchedule
 import java.util.*
 
 /**
@@ -68,6 +69,16 @@ internal class ProgramGuideRowAdapter(
         }
         Log.i(TAG, "Updating program guide with $channelCount channels.")
         notifyDataSetChanged()
+    }
+
+    fun updateProgram(program: ProgramGuideSchedule<*>) : Int? {
+        // Find the match in the row adapters
+        programListAdapters.forEachIndexed { index, adapter ->
+            if (adapter.updateProgram(program)) {
+                return index
+            }
+        }
+        return null
     }
 
     override fun getItemCount(): Int {
@@ -111,7 +122,7 @@ internal class ProgramGuideRowAdapter(
             channelNameView = container.findViewById(R.id.programguide_channel_name)
             channelLogoView = container.findViewById(R.id.programguide_channel_logo)
             val channelContainer = container.findViewById<ViewGroup>(R.id.programguide_channel_container)
-            channelContainer.viewTreeObserver.addOnGlobalFocusChangeListener { oldFocus, newFocus ->
+            channelContainer.viewTreeObserver.addOnGlobalFocusChangeListener { _, _ ->
                 channelContainer.isActivated = rowGridView.hasFocus()
             }
         }
@@ -147,6 +158,12 @@ internal class ProgramGuideRowAdapter(
             }
             channelNameView.text = channel.name
             channelNameView.visibility = View.VISIBLE
+        }
+
+        internal fun updateLayout() {
+            rowGridView.post {
+                rowGridView.updateChildVisibleArea()
+            }
         }
     }
 }

@@ -350,6 +350,46 @@ class ProgramGuideManager<T> {
         notifySchedulesUpdated()
     }
 
+    /**
+     * Replaces a program in the entries based on the ID of the supplied program.
+     * Since IDs should be unique, only the first match will be replaced.
+     *
+     * @param program The program with the new data.
+     * @return The resulting program of the replacement. Null if no replacement happened
+     */
+    fun updateProgram(program: ProgramGuideSchedule<T>) : ProgramGuideSchedule<T>? {
+        val channelEntriesMapKeys = channelEntriesMap.keys
+        var replacement: ProgramGuideSchedule<T>? = null
+        for (key in channelEntriesMapKeys) {
+            val list = channelEntriesMap[key]
+            var mutatedList : MutableList<ProgramGuideSchedule<T>>? = null
+            if (list != null && replacement == null) {
+                for (possibleMatch in list) {
+                    if (possibleMatch.id == program.id && replacement == null) {
+                        if (possibleMatch.originalTimes.startsAtMillis != program.originalTimes.startsAtMillis ||
+                                possibleMatch.originalTimes.endsAtMillis != program.originalTimes.endsAtMillis) {
+                            Log.w(TAG, "Different times found when updating program with ID: ${program.id}. Replacement will happen, but times will not be changed.")
+                        }
+                        if (mutatedList == null) {
+                            mutatedList = list.toMutableList()
+                        }
+                        val index = list.indexOf(possibleMatch)
+                        replacement = possibleMatch.copy(
+                            isClickable = program.isClickable,
+                            displayTitle = program.displayTitle,
+                            program = program.program
+                        )
+                        mutatedList[index] = replacement
+                    }
+                }
+            }
+            if (mutatedList != null) {
+                channelEntriesMap[key] = mutatedList
+            }
+        }
+        return replacement
+    }
+
     interface Listener {
         fun onTimeRangeUpdated()
         fun onSchedulesUpdated()

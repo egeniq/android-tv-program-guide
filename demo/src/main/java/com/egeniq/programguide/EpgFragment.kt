@@ -62,6 +62,8 @@ class EpgFragment : ProgramGuideFragment<EpgFragment.SimpleProgram>() {
         } else {
             Toast.makeText(context, "Open detail page", Toast.LENGTH_LONG).show()
         }
+        // Example of how a program can be updated. You could also change the underlying program.
+        updateProgram(programGuideSchedule.copy(displayTitle = programGuideSchedule.displayTitle + " [clicked]"))
     }
 
     override fun onScheduleSelected(programGuideSchedule: ProgramGuideSchedule<SimpleProgram>?) {
@@ -127,12 +129,12 @@ class EpgFragment : ProgramGuideFragment<EpgFragment.SimpleProgram>() {
                 var nextTime = randomTimeBetween(MIN_CHANNEL_START_TIME, MAX_CHANNEL_START_TIME)
                 while (nextTime.isBefore(MIN_CHANNEL_END_TIME)) {
                     val endTime = ZonedDateTime.ofInstant(Instant.ofEpochSecond(nextTime.toEpochSecond() + Random.nextLong(MIN_SHOW_LENGTH_SECONDS, MAX_SHOW_LENGTH_SECONDS)), ZoneOffset.UTC)
-                    val schedule = createSchedule(channel, showNames.random(), nextTime, endTime)
+                    val schedule = createSchedule(showNames.random(), nextTime, endTime)
                     scheduleList.add(schedule)
                     nextTime = endTime
                 }
                 val endTime = if (nextTime.isBefore(MAX_CHANNEL_END_TIME)) randomTimeBetween(nextTime, MAX_CHANNEL_END_TIME) else MAX_CHANNEL_END_TIME
-                val finalSchedule = createSchedule(channel, showNames.random(), nextTime, endTime)
+                val finalSchedule = createSchedule(showNames.random(), nextTime, endTime)
                 scheduleList.add(finalSchedule)
                 channelMap[channel.id] = scheduleList
             }
@@ -152,7 +154,7 @@ class EpgFragment : ProgramGuideFragment<EpgFragment.SimpleProgram>() {
             })
     }
 
-    private fun createSchedule(channel: SimpleChannel, scheduleName: String, startTime: ZonedDateTime, endTime: ZonedDateTime): ProgramGuideSchedule<SimpleProgram> {
+    private fun createSchedule(scheduleName: String, startTime: ZonedDateTime, endTime: ZonedDateTime): ProgramGuideSchedule<SimpleProgram> {
         val id = Random.nextLong(100_000L)
         val metadata = DateTimeFormatter.ofPattern("'Starts at' HH:mm").format(startTime)
         return ProgramGuideSchedule.createScheduleWithProgram(

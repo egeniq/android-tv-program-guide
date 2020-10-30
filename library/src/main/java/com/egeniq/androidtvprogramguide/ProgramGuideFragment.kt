@@ -880,4 +880,36 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
             autoScrollToBestProgramme(useTimeOfDayFilter = false, specificChannelId = channelId)
         }
     }
+
+    /**
+     * Updates the program everywhere, including the schedule grid.
+     * This method requires that a program with the same ID exists (otherwise nothing will happen).
+     *
+     * If there are multiple programs with the same ID, all of them will be updated.
+     *
+     */
+    fun updateProgram(program: ProgramGuideSchedule<T>) {
+        val replacement = programGuideManager.updateProgram(program)
+        if (replacement != null) {
+            // Now find it in the grid, and update that single
+            val adapter = programGuideGrid.adapter as? ProgramGuideRowAdapter
+            if (adapter == null) {
+                Log.w(TAG, "Program not updated, adapter not found or has incorrect type.")
+                return
+            }
+            val index = adapter.updateProgram(program)
+            if (index == null) {
+                Log.w(TAG, "Program not updated, item not found in adapter.")
+                return
+            }
+            val viewHolder = programGuideGrid.findViewHolderForAdapterPosition(index) as? ProgramGuideRowAdapter.ProgramRowViewHolder
+            if (viewHolder == null) {
+                Log.i(TAG, "Program layout was not updated, because view holder for it was not found - item is probably outside of visible area")
+                return
+            }
+            viewHolder.updateLayout()
+        } else {
+            Log.w(TAG, "Program not updated, no match found.")
+        }
+    }
 }
