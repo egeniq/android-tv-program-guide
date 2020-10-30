@@ -23,6 +23,7 @@
     <color name="programguide_default_gap_color">@android:color/transparent</color>
 
     <color name="programguide_selected_schedule_color">#1565c0</color>
+    <color name="programguide_past_schedule_color">#0E1561</color>
     <color name="programguide_default_schedule_color">#1a237e</color>
 
     <color name="programguide_progress_background_focused">#404040</color>
@@ -44,4 +45,8 @@
     <color name="programguide_detail_text_color">#CCCCCC</color>
     <color name="programguide_button_focused">#1565c0</color>
     <color name="programguide_button_default">#707070</color>
+
+    <color name="programguide_title_text_color_focused">#FFFFFF</color>
+    <color name="programguide_title_text_color_in_past">#D0D0D0</color>
+    <color name="programguide_title_text_color_default">#F0F0F0</color>
 </resources>

@@ -16,6 +16,7 @@
   -->
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:color="#FFFFFF" android:state_focused="true"/>
-    <item android:color="#FFFFFF"/>
+    <item android:color="@color/programguide_title_text_color_focused" android:state_focused="true"/>
+    <item android:color="@color/programguide_title_text_color_default" android:state_activated="true"/>
+    <item android:color="@color/programguide_title_text_color_in_past"/>
 </selector>

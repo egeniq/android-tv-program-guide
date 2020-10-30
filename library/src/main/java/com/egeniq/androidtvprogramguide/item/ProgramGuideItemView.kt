@@ -112,16 +112,16 @@ class ProgramGuideItemView<T> : FrameLayout {
     }
 
     fun updateProgress(now: Long) {
-        with(progressView) {
-            schedule?.let {
-                if (it.isCurrentProgram.not()) {
-                    visibility = View.GONE
-                } else {
-                    visibility = View.VISIBLE
-                    progressView.progress =
-                        ProgramGuideUtil.convertMillisToPixel(it.startsAtMillis, now)
-                }
+        schedule?.let {
+            val hasEnded = now > it.endsAtMillis
+            if (it.isCurrentProgram.not()) {
+                progressView.visibility = View.GONE
+            } else {
+                progressView.visibility = View.VISIBLE
+                progressView.progress =
+                    ProgramGuideUtil.convertMillisToPixel(it.startsAtMillis, now)
             }
+            this.isActivated = !hasEnded
         }
     }
 

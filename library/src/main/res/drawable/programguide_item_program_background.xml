@@ -22,10 +22,16 @@
             <corners android:radius="2dp" />
         </shape>
     </item>
-    <item>
+    <item android:state_activated="true">
         <shape>
             <corners android:radius="2dp"/>
             <solid android:color="@color/programguide_default_schedule_color"/>
+        </shape>
+    </item>
+    <item>
+        <shape>
+            <corners android:radius="2dp"/>
+            <solid android:color="@color/programguide_past_schedule_color"/>
         </shape>
     </item>
 </selector>
