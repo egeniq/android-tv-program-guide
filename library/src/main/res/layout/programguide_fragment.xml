@@ -154,6 +154,8 @@
 
         <!-- Error state -->
         <TextView
+            style="@style/ProgramGuide.ErrorMessage"
+            android:id="@+id/programguide_error_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

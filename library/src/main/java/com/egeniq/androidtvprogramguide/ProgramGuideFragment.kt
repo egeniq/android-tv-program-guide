@@ -115,7 +115,7 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         private set
     protected var currentlySelectedTimeOfDayFilterIndex = -1 // Correct value will be set later
         private set
-    private var currentState = State.Loading
+    private var currentState : State = State.Loading
 
     private var created = false
 
@@ -128,6 +128,7 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
     private val dayFilter get() = view?.findViewById<View>(R.id.programguide_day_filter)
     private val focusCatcher get() = view?.findViewById<View>(R.id.programguide_focus_catcher)
     private val contentAnimator get() = view?.findViewById<ViewAnimator>(R.id.programguide_content_animator)
+    private val errorMessage get() = view?.findViewById<TextView>(R.id.programguide_error_message)
 
     private var timelineStartMillis = 0L
 
@@ -153,8 +154,10 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         }
     }
 
-    enum class State {
-        Loading, Content, Error
+    sealed class State {
+        object Loading : State()
+        object Content : State()
+        data class Error(val errorMessage: String?) : State()
     }
 
     /**
@@ -409,7 +412,7 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
      */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if ((savedInstanceState == null && !created) || currentState != State.Content) {
+        if ((savedInstanceState == null && !created) || currentState !is State.Content) {
             created = true
             // Only get data when fragment is created first time, not recreated from backstack.
             // Also when the content was not loaded yet before.
@@ -735,8 +738,13 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
                 alpha = 1f
                 contentAnimator?.displayedChild = 2
             }
-            State.Error -> {
+            is State.Error -> {
                 alpha = 0f
+                if (state.errorMessage == null) {
+                    errorMessage?.setText(R.string.programguide_error_fetching_content)
+                } else {
+                    errorMessage?.setText(state.errorMessage)
+                }
                 contentAnimator?.displayedChild = 1
             }
             else -> {

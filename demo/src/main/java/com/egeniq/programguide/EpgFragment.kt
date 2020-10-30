@@ -23,6 +23,7 @@ import org.threeten.bp.ZoneOffset
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.temporal.ChronoUnit
+import java.lang.Error
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
@@ -141,7 +142,11 @@ class EpgFragment : ProgramGuideFragment<EpgFragment.SimpleProgram>() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 setData(it.first, it.second, localDate)
-                setState(State.Content)
+                if (it.first.isEmpty() || it.second.isEmpty()) {
+                    setState(State.Error("No channels loaded."))
+                } else {
+                    setState(State.Content)
+                }
             }, {
                 Log.e(TAG, "Unable to load example data!", it)
             })
