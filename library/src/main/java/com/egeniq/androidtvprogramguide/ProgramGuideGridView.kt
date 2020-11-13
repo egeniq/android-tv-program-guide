@@ -21,6 +21,7 @@ import android.graphics.Rect
 import android.util.AttributeSet
 import android.util.Log
 import android.util.Range
+import android.view.KeyEvent
 import android.view.View
 import android.view.ViewTreeObserver
 import androidx.leanback.widget.VerticalGridView
@@ -81,6 +82,8 @@ class ProgramGuideGridView<T>(context: Context, attrs: AttributeSet?, defStyle: 
         }
 
     var featureFocusWrapAround = true
+
+    var featureNavigateWithChannelKeys = false
 
     var overlapStart = 0
 
@@ -327,6 +330,24 @@ class ProgramGuideGridView<T>(context: Context, attrs: AttributeSet?, defStyle: 
                 scrollBy(0, y - maxY)
             }
         }
+    }
+
+    /**
+     * Intercept the channel up / down keys to navigate with them, if this feature is enabled.
+     */
+    override fun dispatchKeyEvent(event: KeyEvent?): Boolean {
+        if (featureNavigateWithChannelKeys && event?.action == KeyEvent.ACTION_DOWN) {
+            val keyCode = event.keyCode
+            val focusedChild = focusedChild
+            if (keyCode == KeyEvent.KEYCODE_CHANNEL_UP) {
+                focusFind(focusedChild, View.FOCUS_UP)?.requestFocus()
+                return true
+            } else if (keyCode == KeyEvent.KEYCODE_CHANNEL_DOWN) {
+                focusFind(focusedChild, View.FOCUS_DOWN)?.requestFocus()
+                return true
+            }
+        }
+        return super.dispatchKeyEvent(event)
     }
 
     fun skipNextFocusedSchedule() {
