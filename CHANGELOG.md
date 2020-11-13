@@ -1,5 +1,9 @@
 # Changelog
 
+### 2020-11-13
+
+* __NEW:__ Added a feature to enable users to navigate in the EPG using the channel switcher on the remote control. This feature is turned off by default, you can enable it by setting `programGuideGrid.featureNavigateWithChannelKeys` to `true`.
+
 ### 2020-10-30
 
 * __NEW:__ Added a method to update a program in the grid. `ProgramGuideFragment.updateProgram(program)` can be used to update a pre-existing program with the same ID. You can update the title, the clickability and the underlying program data object. The demo was also updated with an example, it will append some text to the title if you click on a program.
