@@ -1,5 +1,9 @@
 # Changelog
 
+### 2020-12-23
+
+* Fixes that a channel row might get misaligned in time if you had a very short programme and a large gap or small table width per hour (see issue #25).
+
 ### 2020-11-13
 
 * __NEW:__ Added a feature to enable users to navigate in the EPG using the channel switcher on the remote control. This feature is turned off by default, you can enable it by setting `programGuideGrid.featureNavigateWithChannelKeys` to `true`.
