@@ -67,6 +67,11 @@ class ProgramGuideItemView<T> : FrameLayout {
             val spacing = resources.getDimensionPixelSize(R.dimen.programguide_item_spacing)
             layoutParams.width =
                 scheduleItem.width - 2 * spacing // Here we subtract the spacing, otherwise the calculations will be wrong at other places
+            // If the programme is very short, and the table width is also reduced, or the gap is enlarged,
+            // there is an edge case that we could go into negative widths. This fixes that.
+            if (layoutParams.width < 1) {
+                layoutParams.width = 1
+            }
             setLayoutParams(layoutParams)
         }
         var title = schedule?.displayTitle
