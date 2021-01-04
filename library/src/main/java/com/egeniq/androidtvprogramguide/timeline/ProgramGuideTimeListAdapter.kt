@@ -22,12 +22,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.egeniq.androidtvprogramguide.ProgramGuideManager
 import com.egeniq.androidtvprogramguide.R
 import com.egeniq.androidtvprogramguide.util.ProgramGuideUtil
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
-import org.threeten.bp.ZoneOffset
 import org.threeten.bp.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs

@@ -34,6 +34,7 @@
     <ImageView
         android:id="@+id/programguide_channel_logo"
         style="@style/ProgramGuide.Image.Channel"
+        android:contentDescription="@string/programguide_content_description_channel_logo"
         android:visibility="gone"
         tools:visibility="visible" />
 

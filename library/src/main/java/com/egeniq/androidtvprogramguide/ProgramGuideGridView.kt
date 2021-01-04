@@ -199,10 +199,10 @@ class ProgramGuideGridView<T>(context: Context, attrs: AttributeSet?, defStyle: 
             focusRangeRight = getRightMostFocusablePosition()
         } else {
             focusRangeLeft = getLeftMostFocusablePosition()
-            if (!getGlobalVisibleRect(tempRect)) {
-                focusRangeRight = Int.MAX_VALUE
+            focusRangeRight = if (!getGlobalVisibleRect(tempRect)) {
+                Int.MAX_VALUE
             } else {
-                focusRangeRight = tempRect.width() - overlapStart
+                tempRect.width() - overlapStart
             }
 
         }

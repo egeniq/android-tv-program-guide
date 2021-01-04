@@ -31,4 +31,7 @@
 
     <string name="programguide_day_selector_title">Select the desired day</string>
     <string name="programguide_day_time_selector_title">Select the desired time of day</string>
+    <string name="programguide_content_description_large_thumbnail">Program thumbnail</string>
+    <string name="programguide_content_description_channel_logo">Channel logo</string>
+    <string name="programguide_content_description_dropdown_icon">Dropdown icon</string>
 </resources>

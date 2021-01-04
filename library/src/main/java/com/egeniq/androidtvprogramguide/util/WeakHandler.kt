@@ -51,6 +51,7 @@ abstract class WeakHandler<T> : Handler {
      *
      * @param ref the referent to track
      */
+    @Deprecated("'constructor Handler()' is deprecated")
     constructor(ref: T) {
         mRef = WeakReference(ref)
     }

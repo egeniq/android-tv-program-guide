@@ -17,7 +17,6 @@
 package com.egeniq.androidtvprogramguide.util
 
 import android.graphics.Rect
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewParent
@@ -29,7 +28,6 @@ import java.util.concurrent.TimeUnit
 object ProgramGuideUtil {
     private var WIDTH_PER_HOUR = 0
     private const val INVALID_INDEX = -1
-    private val ONE_DAY_MS = TimeUnit.DAYS.toMillis(1)
 
     var lastClickedSchedule : ProgramGuideSchedule<*>? = null
 

@@ -1,5 +1,11 @@
 # Changelog
 
+### 2020-01-04
+
+* Fixes a minor issue that the item progress background color was using the focused color for the default mode.
+* Fixes a lot of Lint warnings.
+* Updates dependencies to their latest versions.
+
 ### 2020-12-23
 
 * Fixes that a channel row might get misaligned in time if you had a very short programme and a large gap or small table width per hour (see issue #25).

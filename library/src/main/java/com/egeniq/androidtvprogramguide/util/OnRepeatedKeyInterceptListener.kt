@@ -16,6 +16,7 @@
 
 package com.egeniq.androidtvprogramguide.util
 
+import android.os.Looper
 import android.os.Message
 import android.view.KeyEvent
 import android.view.View
@@ -52,7 +53,8 @@ class OnRepeatedKeyInterceptListener(private val verticalGridView: VerticalGridV
             isFocusAccelerated = false
             return false
         }
-        mDirection = if (event.keyCode == KeyEvent.KEYCODE_DPAD_UP) View.FOCUS_UP else View.FOCUS_DOWN
+        mDirection =
+            if (event.keyCode == KeyEvent.KEYCODE_DPAD_UP) View.FOCUS_UP else View.FOCUS_DOWN
         var skippedViewCount = MAX_SKIPPED_VIEW_COUNT[0]
         for (i in 1 until THRESHOLD_FAST_FOCUS_CHANGE_TIME_MS.size) {
             if (THRESHOLD_FAST_FOCUS_CHANGE_TIME_MS[i] < duration) {
@@ -71,12 +73,16 @@ class OnRepeatedKeyInterceptListener(private val verticalGridView: VerticalGridV
             isFocusAccelerated = false
         }
         for (i in 0 until skippedViewCount) {
-            mHandler.sendEmptyMessageDelayed(MSG_MOVE_FOCUS, mRepeatedKeyInterval * i / (skippedViewCount + 1))
+            mHandler.sendEmptyMessageDelayed(
+                MSG_MOVE_FOCUS,
+                mRepeatedKeyInterval * i / (skippedViewCount + 1)
+            )
         }
         return false
     }
 
-    class KeyInterceptHandler(listener: OnRepeatedKeyInterceptListener) : WeakHandler<OnRepeatedKeyInterceptListener>(listener) {
+    class KeyInterceptHandler(listener: OnRepeatedKeyInterceptListener) :
+        WeakHandler<OnRepeatedKeyInterceptListener>(Looper.getMainLooper(), listener) {
 
         public override fun handleMessage(msg: Message, referent: OnRepeatedKeyInterceptListener) {
             if (msg.what == MSG_MOVE_FOCUS) {

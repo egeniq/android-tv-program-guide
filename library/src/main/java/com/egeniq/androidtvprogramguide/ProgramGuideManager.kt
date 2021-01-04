@@ -78,6 +78,7 @@ class ProgramGuideManager<T> {
     }
 
 
+    @Suppress("ConvertTwoComparisonsToRangeCheck")
     private fun updateChannelsTimeRange(selectedDate: LocalDate, timeZone: ZoneId) {
         val viewPortWidth = toUtcMillis - fromUtcMillis
         var newStartMillis: Long? = null
@@ -331,10 +332,10 @@ class ProgramGuideManager<T> {
 
     fun getChannelIndex(channelId: String): Int? {
         val index = channels.indexOfFirst { it.id == channelId }
-        if (index < 0) {
-            return null
+        return if (index < 0) {
+            null
         } else {
-            return index
+            index
         }
     }
 

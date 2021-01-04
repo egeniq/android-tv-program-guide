@@ -46,6 +46,7 @@ import com.egeniq.androidtvprogramguide.row.ProgramGuideRowAdapter
 import com.egeniq.androidtvprogramguide.timeline.ProgramGuideTimeListAdapter
 import com.egeniq.androidtvprogramguide.timeline.ProgramGuideTimelineRow
 import com.egeniq.androidtvprogramguide.util.FilterOption
+import com.egeniq.androidtvprogramguide.util.FixedLocalDateTime
 import com.egeniq.androidtvprogramguide.util.FixedZonedDateTime
 import com.egeniq.androidtvprogramguide.util.ProgramGuideUtil
 import org.threeten.bp.Instant
@@ -84,7 +85,7 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         private val TAG: String = ProgramGuideFragment::class.java.name
     }
 
-    protected val FILTER_DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE
+    protected val FILTER_DATE_FORMATTER : DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE
 
     // Config values, override in subclass if necessary
     protected open val DISPLAY_LOCALE = Locale("en", "US")
@@ -94,7 +95,7 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
     protected open val USE_HUMAN_DATES = true
 
     @Suppress("LeakingThis")
-    protected open val DATE_WITH_DAY_FORMATTER =
+    protected open val DATE_WITH_DAY_FORMATTER : DateTimeFormatter =
         DateTimeFormatter.ofPattern("EEE d MMM").withLocale(DISPLAY_LOCALE)
     protected open val DISPLAY_CURRENT_TIME_INDICATOR = true
 
@@ -141,7 +142,7 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
 
     private var focusEnabledScrollListener: RecyclerView.OnScrollListener? = null
 
-    protected var currentDate: LocalDate = LocalDate.now()
+    protected var currentDate: LocalDate = FixedLocalDateTime.now().toLocalDate()
         private set
 
     private val progressUpdateHandler: Handler = Handler(Looper.getMainLooper())
@@ -301,7 +302,7 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
             AlertDialog.Builder(it.context)
                 .setTitle(R.string.programguide_day_time_selector_title)
                 .setSingleChoiceItems(
-                    timeOfDayFilterOptions.map { it.displayTitle }.toTypedArray(),
+                    timeOfDayFilterOptions.map { option -> option.displayTitle }.toTypedArray(),
                     currentlySelectedTimeOfDayFilterIndex
                 ) { dialogInterface, position ->
                     currentlySelectedTimeOfDayFilterIndex = position
@@ -376,8 +377,8 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         view.findViewById<ProgramGuideGridView<T>>(R.id.programguide_grid)?.let {
             it.initialize(programGuideManager)
             // Set the feature flags
-            it.setFocusOutSideAllowed(false, false)
-            it.setFocusOutAllowed(true, false)
+            it.setFocusOutSideAllowed(throughStart = false, throughEnd = false)
+            it.setFocusOutAllowed(throughFront = true, throughEnd = false)
             it.featureKeepCurrentProgramFocused = false
             it.featureFocusWrapAround = false
 
@@ -636,8 +637,8 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
                             }
 
                             override fun onChildViewAttachedToWindow(view: View) {
-                                childAttachStateChangeListener?.let {
-                                    timeRow?.removeOnChildAttachStateChangeListener(it)
+                                childAttachStateChangeListener?.let { listener ->
+                                    timeRow?.removeOnChildAttachStateChangeListener(listener)
                                 }
                                 if (!willUseScrollListener && !didPostCallback) {
                                     Log.v(
@@ -694,7 +695,7 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         if (dateText.endsWith(".")) {
             dateText = dateText.dropLast(1)
         }
-        currentDateView?.text = dateText.capitalize()
+        currentDateView?.text = dateText.capitalize(DISPLAY_LOCALE)
     }
 
     private fun updateTimeline() {
@@ -744,7 +745,7 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
                 if (state.errorMessage == null) {
                     errorMessage?.setText(R.string.programguide_error_fetching_content)
                 } else {
-                    errorMessage?.setText(state.errorMessage)
+                    errorMessage?.text = state.errorMessage
                 }
                 contentAnimator?.displayedChild = 1
             }
@@ -817,7 +818,7 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
             autoScrollToBestProgramme()
         }
 
-        timeRow?.animate()?.alpha(1f)?.setDuration(500)
+        timeRow?.animate()?.alpha(1f)?.duration = 500
     }
 
     /**

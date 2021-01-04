@@ -17,5 +17,5 @@
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:color="@color/programguide_progress_background_focused" android:state_focused="true"/>
-    <item android:color="@color/programguide_progress_background_focused"/>
+    <item android:color="@color/programguide_progress_background_default"/>
 </selector>

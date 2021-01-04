@@ -110,7 +110,7 @@ class EpgFragment : ProgramGuideFragment<EpgFragment.SimpleProgram>() {
             val channels = listOf(
                 SimpleChannel("npo-1", SpannedString("NPO 1"), "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/NPO_1_logo_2014.svg/320px-NPO_1_logo_2014.svg.png"),
                 SimpleChannel("npo-2", SpannedString("NPO 2"), "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/NPO_2_logo_2014.svg/275px-NPO_2_logo_2014.svg.png"),
-                SimpleChannel("bbc-news", SpannedString("BBC NEWS"), "https://upload.wikimedia.org/wikipedia/en/thumb/6/62/BBC_News_2019.svg/240px-BBC_News_2019.svg.png"),
+                SimpleChannel("bbc-news", SpannedString("BBC NEWS"), "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/BBC_News_2019.svg/200px-BBC_News_2019.svg.png"),
                 SimpleChannel("zdf", SpannedString("ZDF"), "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/ZDF_logo.svg/200px-ZDF_logo.svg.png"),
                 SimpleChannel("jednotka", SpannedString("Jednotka"), "https://upload.wikimedia.org/wikipedia/en/thumb/7/76/Jednotka.svg/255px-Jednotka.svg.png"),
                 SimpleChannel("tv-nova", SpannedString("TV nova"), "https://upload.wikimedia.org/wikipedia/commons/2/2f/TV_Nova_logo_2017.png"),
