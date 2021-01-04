@@ -1,6 +1,6 @@
 # Changelog
 
-### 2020-01-04
+### 2021-01-04
 
 * Fixes a minor issue that the item progress background color was using the focused color for the default mode.
 * Fixes a lot of Lint warnings.
