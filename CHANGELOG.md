@@ -1,5 +1,9 @@
 # Changelog
 
+### 2021-06-08
+
+* Fixes a minor issue where onScheduleSelected() would not be called when the grid is focused again and the first focused item is not the leftmost one.
+
 ### 2021-01-04
 
 * Fixes a minor issue that the item progress background color was using the focused color for the default mode.

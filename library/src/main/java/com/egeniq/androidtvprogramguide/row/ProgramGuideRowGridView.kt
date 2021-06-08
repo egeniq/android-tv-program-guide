@@ -198,7 +198,7 @@ class ProgramGuideRowGridView @JvmOverloads constructor(context: Context, attrs:
                 // This skipping is required because in some weird way the global focus change listener gets the event
                 // in the wrong order, so first the replacing item, then the old one.
                 // By skipping the second one, only the (correct) replacing item will be notfied to the listeners
-                programGuideHolder.programGuideGrid.skipNextFocusedSchedule()
+                programGuideHolder.programGuideGrid.markCorrectChild(it)
                 return
             }
         }

@@ -68,7 +68,7 @@ class ProgramGuideGridView<T>(context: Context, attrs: AttributeSet?, defStyle: 
     private val rowHeight: Int
     private val selectionRow: Int
     private var lastFocusedView: View? = null
-    private var skipNextFocusedSchedule = false
+    private var correctScheduleView: View? = null
 
     private val onRepeatedKeyInterceptListener: OnRepeatedKeyInterceptListener
 
@@ -110,10 +110,10 @@ class ProgramGuideGridView<T>(context: Context, attrs: AttributeSet?, defStyle: 
                 nextFocusByUpDown = null
                 if (ProgramGuideUtil.isDescendant(this@ProgramGuideGridView, newFocus)) {
                     lastFocusedView = newFocus
-                    if (newFocus is ProgramGuideItemView<*> && !skipNextFocusedSchedule) {
+                    if (newFocus is ProgramGuideItemView<*> && (correctScheduleView == null || correctScheduleView == newFocus)) {
                         scheduleSelectionListener?.onSelectionChanged(newFocus.schedule as ProgramGuideSchedule<T>?)
                     }
-                    skipNextFocusedSchedule = false
+                    correctScheduleView = null
                 } else {
                     scheduleSelectionListener?.onSelectionChanged(null)
                 }
@@ -350,7 +350,7 @@ class ProgramGuideGridView<T>(context: Context, attrs: AttributeSet?, defStyle: 
         return super.dispatchKeyEvent(event)
     }
 
-    fun skipNextFocusedSchedule() {
-        skipNextFocusedSchedule = true
+    fun markCorrectChild(view: View) {
+        correctScheduleView = view
     }
 }
