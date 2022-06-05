@@ -25,8 +25,12 @@ import androidx.annotation.RequiresApi
 import kotlin.math.abs
 
 
-class ProgramGuideTimelineRow @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
-        ProgramGuideTimelineGridView(context, attrs, defStyle) {
+class ProgramGuideTimelineRow @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyle: Int = 0
+) :
+    ProgramGuideTimelineGridView(context, attrs, defStyle) {
 
     companion object {
         private const val FADING_EDGE_STRENGTH_START = 1.0f
@@ -120,19 +124,26 @@ class ProgramGuideTimelineRow @JvmOverloads constructor(context: Context, attrs:
         companion object {
             @Suppress("unused")
             @JvmField
-            val CREATOR: Parcelable.Creator<SavedState> = object : Parcelable.ClassLoaderCreator<SavedState> {
-                override fun createFromParcel(source: Parcel): SavedState {
-                    return SavedState(source)
-                }
+            val CREATOR: Parcelable.Creator<SavedState> =
+                object : Parcelable.ClassLoaderCreator<SavedState> {
+                    override fun createFromParcel(source: Parcel): SavedState {
+                        return SavedState(source)
+                    }
 
-                override fun createFromParcel(source: Parcel, loader: ClassLoader?): SavedState {
-                    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) SavedState(source, loader) else SavedState(source)
-                }
+                    override fun createFromParcel(
+                        source: Parcel,
+                        loader: ClassLoader?
+                    ): SavedState {
+                        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) SavedState(
+                            source,
+                            loader
+                        ) else SavedState(source)
+                    }
 
-                override fun newArray(size: Int): Array<SavedState?> {
-                    return arrayOfNulls(size)
+                    override fun newArray(size: Int): Array<SavedState?> {
+                        return arrayOfNulls(size)
+                    }
                 }
-            }
         }
     }
 }

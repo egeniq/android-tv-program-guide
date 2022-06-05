@@ -29,44 +29,56 @@ import org.threeten.bp.Instant
  * The displayTitle property is the string which is visible to the user in the EPG.
  */
 data class ProgramGuideSchedule<T>(
-        val id: Long,
-        val startsAtMillis: Long,
-        val endsAtMillis: Long,
-        val originalTimes: OriginalTimes,
-        val isClickable: Boolean,
-        val displayTitle: String?,
-        val program: T?) {
+    val id: Long,
+    val startsAtMillis: Long,
+    val endsAtMillis: Long,
+    val originalTimes: OriginalTimes,
+    val isClickable: Boolean,
+    val displayTitle: String?,
+    val program: T?
+) {
 
     /**
      * Used internally. We make some fixes and adjustments to the times in the program manager,
      * but for consistency we keep the original times here as well.
      */
     data class OriginalTimes(
-            val startsAtMillis: Long,
-            val endsAtMillis: Long
+        val startsAtMillis: Long,
+        val endsAtMillis: Long
     )
 
     companion object {
         private const val GAP_ID = -1L
 
         fun <T> createGap(from: Long, to: Long): ProgramGuideSchedule<T> {
-            return ProgramGuideSchedule(GAP_ID,
-                    from,
-                    to,
-                    OriginalTimes(from, to),
-                    false,
-                    null,
-                    null)
+            return ProgramGuideSchedule(
+                GAP_ID,
+                from,
+                to,
+                OriginalTimes(from, to),
+                false,
+                null,
+                null
+            )
         }
 
-        fun <T> createScheduleWithProgram(id: Long, startsAt: Instant, endsAt: Instant, isClickable: Boolean, displayTitle: String?, program: T): ProgramGuideSchedule<T> {
-            return ProgramGuideSchedule(id,
-                    startsAt.toEpochMilli(),
-                    endsAt.toEpochMilli(),
-                    OriginalTimes(startsAt.toEpochMilli(), endsAt.toEpochMilli()),
-                    isClickable,
-                    displayTitle,
-                    program)
+        fun <T> createScheduleWithProgram(
+            id: Long,
+            startsAt: Instant,
+            endsAt: Instant,
+            isClickable: Boolean,
+            displayTitle: String?,
+            program: T
+        ): ProgramGuideSchedule<T> {
+            return ProgramGuideSchedule(
+                id,
+                startsAt.toEpochMilli(),
+                endsAt.toEpochMilli(),
+                OriginalTimes(startsAt.toEpochMilli(), endsAt.toEpochMilli()),
+                isClickable,
+                displayTitle,
+                program
+            )
         }
     }
 

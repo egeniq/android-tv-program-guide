@@ -29,7 +29,7 @@ object ProgramGuideUtil {
     private var WIDTH_PER_HOUR = 0
     private const val INVALID_INDEX = -1
 
-    var lastClickedSchedule : ProgramGuideSchedule<*>? = null
+    var lastClickedSchedule: ProgramGuideSchedule<*>? = null
 
     /**
      * Sets the width in pixels that corresponds to an hour in program guide. Assume that this is

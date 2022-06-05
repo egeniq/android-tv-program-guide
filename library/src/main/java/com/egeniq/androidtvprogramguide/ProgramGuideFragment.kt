@@ -85,7 +85,7 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         private val TAG: String = ProgramGuideFragment::class.java.name
     }
 
-    protected val FILTER_DATE_FORMATTER : DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE
+    protected val FILTER_DATE_FORMATTER: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE
 
     // Config values, override in subclass if necessary
     protected open val DISPLAY_LOCALE = Locale("en", "US")
@@ -95,7 +95,7 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
     protected open val USE_HUMAN_DATES = true
 
     @Suppress("LeakingThis")
-    protected open val DATE_WITH_DAY_FORMATTER : DateTimeFormatter =
+    protected open val DATE_WITH_DAY_FORMATTER: DateTimeFormatter =
         DateTimeFormatter.ofPattern("EEE d MMM").withLocale(DISPLAY_LOCALE)
     protected open val DISPLAY_CURRENT_TIME_INDICATOR = true
 
@@ -117,7 +117,7 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         private set
     protected var currentlySelectedTimeOfDayFilterIndex = -1 // Correct value will be set later
         private set
-    private var currentState : State = State.Loading
+    private var currentState: State = State.Loading
 
     private var created = false
 
@@ -904,9 +904,13 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
                 Log.w(TAG, "Program not updated, item not found in adapter.")
                 return
             }
-            val viewHolder = programGuideGrid.findViewHolderForAdapterPosition(index) as? ProgramGuideRowAdapter.ProgramRowViewHolder
+            val viewHolder =
+                programGuideGrid.findViewHolderForAdapterPosition(index) as? ProgramGuideRowAdapter.ProgramRowViewHolder
             if (viewHolder == null) {
-                Log.i(TAG, "Program layout was not updated, because view holder for it was not found - item is probably outside of visible area")
+                Log.i(
+                    TAG,
+                    "Program layout was not updated, because view holder for it was not found - item is probably outside of visible area"
+                )
                 return
             }
             viewHolder.updateLayout()
