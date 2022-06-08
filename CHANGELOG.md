@@ -1,5 +1,9 @@
 # Changelog
 
+### 2022-06-08
+
+* Gradle version and some dependency versions were updated, code reformat.
+
 ### 2021-06-08
 
 * Fixes a minor issue where onScheduleSelected() would not be called when the grid is focused again and the first focused item is not the leftmost one.
