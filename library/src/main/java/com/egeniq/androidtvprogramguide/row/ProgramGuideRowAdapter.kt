@@ -16,6 +16,7 @@
 
 package com.egeniq.androidtvprogramguide.row
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
@@ -60,6 +61,7 @@ internal class ProgramGuideRowAdapter(
         update()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun update() {
         programListAdapters.clear()
         val channelCount = programManager.channelCount
@@ -71,7 +73,7 @@ internal class ProgramGuideRowAdapter(
         notifyDataSetChanged()
     }
 
-    fun updateProgram(program: ProgramGuideSchedule<*>) : Int? {
+    fun updateProgram(program: ProgramGuideSchedule<*>): Int? {
         // Find the match in the row adapters
         programListAdapters.forEachIndexed { index, adapter ->
             if (adapter.updateProgram(program)) {
@@ -112,16 +114,14 @@ internal class ProgramGuideRowAdapter(
     internal class ProgramRowViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private val container: ViewGroup = itemView as ViewGroup
-        private val rowGridView: ProgramGuideRowGridView
+        private val rowGridView: ProgramGuideRowGridView = container.findViewById(R.id.row)
 
-        private val channelNameView: TextView
-        private val channelLogoView: ImageView
+        private val channelNameView: TextView = container.findViewById(R.id.programguide_channel_name)
+        private val channelLogoView: ImageView = container.findViewById(R.id.programguide_channel_logo)
 
         init {
-            rowGridView = container.findViewById(R.id.row)
-            channelNameView = container.findViewById(R.id.programguide_channel_name)
-            channelLogoView = container.findViewById(R.id.programguide_channel_logo)
-            val channelContainer = container.findViewById<ViewGroup>(R.id.programguide_channel_container)
+            val channelContainer =
+                container.findViewById<ViewGroup>(R.id.programguide_channel_container)
             channelContainer.viewTreeObserver.addOnGlobalFocusChangeListener { _, _ ->
                 channelContainer.isActivated = rowGridView.hasFocus()
             }

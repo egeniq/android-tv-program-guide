@@ -16,6 +16,7 @@
 
 package com.egeniq.androidtvprogramguide
 
+import android.annotation.SuppressLint
 import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
@@ -25,8 +26,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.egeniq.androidtvprogramguide.entity.ProgramGuideSchedule
 import com.egeniq.androidtvprogramguide.item.ProgramGuideItemView
 
-class ProgramGuideListAdapter<T>(res: Resources, private val programGuideFragment: ProgramGuideHolder<T>, private val channelIndex: Int) :
-        RecyclerView.Adapter<ProgramGuideListAdapter.ProgramItemViewHolder<T>>(), ProgramGuideManager.Listener {
+class ProgramGuideListAdapter<T>(
+    res: Resources,
+    private val programGuideFragment: ProgramGuideHolder<T>,
+    private val channelIndex: Int
+) :
+    RecyclerView.Adapter<ProgramGuideListAdapter.ProgramItemViewHolder<T>>(),
+    ProgramGuideManager.Listener {
 
     private val programGuideManager: ProgramGuideManager<T>
     private val noInfoProgramTitle: String
@@ -44,6 +50,7 @@ class ProgramGuideListAdapter<T>(res: Resources, private val programGuideFragmen
         // Do nothing
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onSchedulesUpdated() {
         val channel = programGuideManager.getChannel(channelIndex)
         if (channel != null) {
@@ -54,7 +61,11 @@ class ProgramGuideListAdapter<T>(res: Resources, private val programGuideFragmen
 
     fun updateProgram(program: ProgramGuideSchedule<*>): Boolean {
         for (position in 0 until itemCount) {
-            if (programGuideManager.getScheduleForChannelIdAndIndex(channelId, position).id == program.id) {
+            if (programGuideManager.getScheduleForChannelIdAndIndex(
+                    channelId,
+                    position
+                ).id == program.id
+            ) {
                 notifyItemChanged(position)
                 return true
             }
@@ -75,7 +86,8 @@ class ProgramGuideListAdapter<T>(res: Resources, private val programGuideFragmen
     }
 
     override fun onBindViewHolder(holder: ProgramItemViewHolder<T>, position: Int) {
-        val programGuideSchedule = programGuideManager.getScheduleForChannelIdAndIndex(channelId, position)
+        val programGuideSchedule =
+            programGuideManager.getScheduleForChannelIdAndIndex(channelId, position)
         val gapTitle = noInfoProgramTitle
         holder.onBind(programGuideSchedule, programGuideFragment, gapTitle)
     }
@@ -98,7 +110,11 @@ class ProgramGuideListAdapter<T>(res: Resources, private val programGuideFragmen
             itemView.clipToOutline = true
         }
 
-        fun onBind(schedule: ProgramGuideSchedule<R>, programGuideHolder: ProgramGuideHolder<R>, gapTitle: String) {
+        fun onBind(
+            schedule: ProgramGuideSchedule<R>,
+            programGuideHolder: ProgramGuideHolder<R>,
+            gapTitle: String
+        ) {
             val programManager = programGuideHolder.programGuideManager
             @Suppress("UNCHECKED_CAST")
             programGuideItemView = itemView as ProgramGuideItemView<R>
@@ -107,11 +123,11 @@ class ProgramGuideListAdapter<T>(res: Resources, private val programGuideFragmen
                 programGuideHolder.onScheduleClickedInternal(schedule)
             }
             programGuideItemView?.setValues(
-                    scheduleItem = schedule,
-                    fromUtcMillis = programManager.getFromUtcMillis(),
-                    toUtcMillis = programManager.getToUtcMillis(),
-                    gapTitle = gapTitle,
-                    displayProgress = programGuideHolder.DISPLAY_SHOW_PROGRESS
+                scheduleItem = schedule,
+                fromUtcMillis = programManager.getFromUtcMillis(),
+                toUtcMillis = programManager.getToUtcMillis(),
+                gapTitle = gapTitle,
+                displayProgress = programGuideHolder.DISPLAY_SHOW_PROGRESS
             )
         }
 

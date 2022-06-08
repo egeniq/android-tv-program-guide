@@ -33,7 +33,11 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.max
 import kotlin.math.min
 
-class ProgramGuideRowGridView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) : ProgramGuideTimelineGridView(context, attrs, defStyle) {
+class ProgramGuideRowGridView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyle: Int = 0
+) : ProgramGuideTimelineGridView(context, attrs, defStyle) {
 
     companion object {
         private val ONE_HOUR_MILLIS = TimeUnit.HOURS.toMillis(1)
@@ -46,7 +50,8 @@ class ProgramGuideRowGridView @JvmOverloads constructor(context: Context, attrs:
     private lateinit var programGuideManager: ProgramGuideManager<*>
 
     private var channel: ProgramGuideChannel? = null
-    private val minimumStickOutWidth = resources.getDimensionPixelOffset(R.dimen.programguide_minimum_item_width_sticking_out_behind_channel_column)
+    private val minimumStickOutWidth =
+        resources.getDimensionPixelOffset(R.dimen.programguide_minimum_item_width_sticking_out_behind_channel_column)
 
     private val layoutListener = object : OnGlobalLayoutListener {
         override fun onGlobalLayout() {
@@ -88,7 +93,7 @@ class ProgramGuideRowGridView @JvmOverloads constructor(context: Context, attrs:
 
     override fun focusSearch(focused: View, direction: Int): View? {
         val focusedEntry = (focused as ProgramGuideItemView<*>).schedule
-                ?: return super.focusSearch(focused, direction)
+            ?: return super.focusSearch(focused, direction)
         val fromMillis = programGuideManager.getFromUtcMillis()
         val toMillis = programGuideManager.getToUtcMillis()
 
@@ -96,7 +101,7 @@ class ProgramGuideRowGridView @JvmOverloads constructor(context: Context, attrs:
             if (focusedEntry.startsAtMillis < fromMillis) {
                 // The current entry starts outside of the view; Align or scroll to the left.
                 scrollByTime(
-                        max(-ONE_HOUR_MILLIS, focusedEntry.startsAtMillis - fromMillis)
+                    max(-ONE_HOUR_MILLIS, focusedEntry.startsAtMillis - fromMillis)
                 )
                 return focused
             }
@@ -126,17 +131,17 @@ class ProgramGuideRowGridView @JvmOverloads constructor(context: Context, attrs:
             if (targetEntry.startsAtMillis < fromMillis && targetEntry.endsAtMillis < fromMillis + HALF_HOUR_MILLIS) {
                 // The target entry starts outside the view; Align or scroll to the left (or right, on RTL).
                 scrollByTime(
-                        max(-ONE_HOUR_MILLIS, targetEntry.startsAtMillis - fromMillis)
+                    max(-ONE_HOUR_MILLIS, targetEntry.startsAtMillis - fromMillis)
                 )
             }
         } else if (isDirectionEnd(direction) || direction == View.FOCUS_FORWARD) {
             if (targetEntry.startsAtMillis > fromMillis + ONE_HOUR_MILLIS + HALF_HOUR_MILLIS) {
                 // The target entry starts outside the view; Align or scroll to the right (or left, on RTL).
                 scrollByTime(
-                        min(
-                                ONE_HOUR_MILLIS,
-                                targetEntry.startsAtMillis - fromMillis - ONE_HOUR_MILLIS
-                        )
+                    min(
+                        ONE_HOUR_MILLIS,
+                        targetEntry.startsAtMillis - fromMillis - ONE_HOUR_MILLIS
+                    )
                 )
             }
         }
@@ -212,16 +217,20 @@ class ProgramGuideRowGridView @JvmOverloads constructor(context: Context, attrs:
         val viewPosition = layoutManager?.getPosition(child)
 
         if (layoutDirection == LAYOUT_DIRECTION_LTR && (leftEdge >= programGuideHolder.programGuideGrid.getFocusRange().lower ||
-            rightEdge >= programGuideHolder.programGuideGrid.getFocusRange().lower + minimumStickOutWidth)) {
+                    rightEdge >= programGuideHolder.programGuideGrid.getFocusRange().lower + minimumStickOutWidth)
+        ) {
             return child
         } else if (layoutDirection == LAYOUT_DIRECTION_RTL && (rightEdge <= programGuideHolder.programGuideGrid.getFocusRange().upper ||
-            leftEdge <= programGuideHolder.programGuideGrid.getFocusRange().upper - minimumStickOutWidth)) {
+                    leftEdge <= programGuideHolder.programGuideGrid.getFocusRange().upper - minimumStickOutWidth)
+        ) {
             // RTL mode
             return child
         }
 
         //if not check if we have a next child and recursively test it again
-        if (viewPosition != null && viewPosition >= 0 && viewPosition < (layoutManager?.itemCount ?: 0 - 1)) {
+        if (viewPosition != null && viewPosition >= 0 && viewPosition < (layoutManager?.itemCount
+                ?: (0 - 1))
+        ) {
             val nextChild = layoutManager?.findViewByPosition(viewPosition + 1)
             nextChild?.let {
                 return findNextFocusableChild(it)
@@ -231,15 +240,18 @@ class ProgramGuideRowGridView @JvmOverloads constructor(context: Context, attrs:
         return null
     }
 
-    public override fun onRequestFocusInDescendants(direction: Int, previouslyFocusedRect: Rect?): Boolean {
+    public override fun onRequestFocusInDescendants(
+        direction: Int,
+        previouslyFocusedRect: Rect?
+    ): Boolean {
         val programGrid = programGuideHolder.programGuideGrid
         // Give focus according to the previous focused range
         val focusRange = programGrid.getFocusRange()
         val nextFocus = ProgramGuideUtil.findNextFocusedProgram(
-                this,
-                focusRange.lower,
-                focusRange.upper,
-                programGrid.isKeepCurrentProgramFocused()
+            this,
+            focusRange.lower,
+            focusRange.upper,
+            programGrid.isKeepCurrentProgramFocused()
         )
 
         if (nextFocus != null) {
@@ -272,7 +284,8 @@ class ProgramGuideRowGridView @JvmOverloads constructor(context: Context, attrs:
     /** Resets the scroll with the initial offset `currentScrollOffset`.  */
     fun resetScroll(scrollOffset: Int) {
         val channel = channel
-        val startTime = ProgramGuideUtil.convertPixelToMillis(scrollOffset) + programGuideManager.getStartTime()
+        val startTime =
+            ProgramGuideUtil.convertPixelToMillis(scrollOffset) + programGuideManager.getStartTime()
         val position = if (channel == null) {
             -1
         } else {
@@ -283,7 +296,10 @@ class ProgramGuideRowGridView @JvmOverloads constructor(context: Context, attrs:
         } else if (channel?.id != null) {
             val slug = channel.id
             val entry = programGuideManager.getScheduleForChannelIdAndIndex(slug, position)
-            val offset = ProgramGuideUtil.convertMillisToPixel(programGuideManager.getStartTime(), entry.startsAtMillis) - scrollOffset
+            val offset = ProgramGuideUtil.convertMillisToPixel(
+                programGuideManager.getStartTime(),
+                entry.startsAtMillis
+            ) - scrollOffset
             (layoutManager as LinearLayoutManager).scrollToPositionWithOffset(position, offset)
             // Workaround to b/31598505. When a program's duration is too long,
             // RecyclerView.onScrolled() will not be called after scrollToPositionWithOffset().

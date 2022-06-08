@@ -51,7 +51,8 @@ class ProgramGuideTimeListAdapter(
 
     init {
         if (rowHeaderOverlapping == 0) {
-            rowHeaderOverlapping = abs(res.getDimensionPixelOffset(R.dimen.programguide_time_row_negative_margin))
+            rowHeaderOverlapping =
+                abs(res.getDimensionPixelOffset(R.dimen.programguide_time_row_negative_margin))
         }
 
     }

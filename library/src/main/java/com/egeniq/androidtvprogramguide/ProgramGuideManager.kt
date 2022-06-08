@@ -40,7 +40,7 @@ class ProgramGuideManager<T> {
         private const val DAY_STARTS_AT_HOUR = 5
         private const val DAY_ENDS_NEXT_DAY_AT_HOUR = 6
 
-        private val TAG : String = ProgramGuideManager::class.java.name
+        private val TAG: String = ProgramGuideManager::class.java.name
     }
 
 
@@ -113,8 +113,10 @@ class ProgramGuideManager<T> {
                     entries.add(ProgramGuideSchedule.createGap(startUtcMillis, endUtcMillis))
                 } else {
                     // Cut off items which don't belong in the desired timeframe
-                    val timelineStartsAt = selectedDate.atStartOfDay(timeZone).withHour(DAY_STARTS_AT_HOUR)
-                    val timelineEndsAt = timelineStartsAt.plusDays(1).withHour(DAY_ENDS_NEXT_DAY_AT_HOUR)
+                    val timelineStartsAt =
+                        selectedDate.atStartOfDay(timeZone).withHour(DAY_STARTS_AT_HOUR)
+                    val timelineEndsAt =
+                        timelineStartsAt.plusDays(1).withHour(DAY_ENDS_NEXT_DAY_AT_HOUR)
 
                     val timelineStartsAtMillis = timelineStartsAt.toEpochSecond() * 1_000
                     val timelineEndsAtMillis = timelineEndsAt.toEpochSecond() * 1_000
@@ -127,7 +129,12 @@ class ProgramGuideManager<T> {
                             timelineIterator.remove()
                         } else if (current.startsAtMillis < timelineStartsAtMillis && current.endsAtMillis < timelineEndsAtMillis) {
                             // Sticks out both sides
-                            timelineIterator.set(current.copy(startsAtMillis = timelineStartsAtMillis, endsAtMillis = timelineEndsAtMillis))
+                            timelineIterator.set(
+                                current.copy(
+                                    startsAtMillis = timelineStartsAtMillis,
+                                    endsAtMillis = timelineEndsAtMillis
+                                )
+                            )
                         } else if (current.startsAtMillis < timelineStartsAtMillis) {
                             // Sticks out left
                             timelineIterator.set(current.copy(startsAtMillis = timelineStartsAtMillis))
@@ -148,21 +155,37 @@ class ProgramGuideManager<T> {
                     val lastEntry = entries.lastOrNull()
                     if (lastEntry == null || endUtcMillis > lastEntry.endsAtMillis) {
                         // We need to add a gap item to fill the place
-                        entries.add(ProgramGuideSchedule.createGap(lastEntry?.endsAtMillis
-                                ?: startUtcMillis, endUtcMillis))
+                        entries.add(
+                            ProgramGuideSchedule.createGap(
+                                lastEntry?.endsAtMillis
+                                    ?: startUtcMillis, endUtcMillis
+                            )
+                        )
                     } else if (lastEntry.endsAtMillis == java.lang.Long.MAX_VALUE) {
                         entries.removeAt(entries.size - 1)
-                        entries.add(ProgramGuideSchedule.createGap(lastEntry.startsAtMillis, endUtcMillis))
+                        entries.add(
+                            ProgramGuideSchedule.createGap(
+                                lastEntry.startsAtMillis,
+                                endUtcMillis
+                            )
+                        )
                     }
                     // Pad the items on the left
                     val firstEntry = entries.firstOrNull()
                     if (firstEntry == null || startUtcMillis < firstEntry.startsAtMillis) {
                         // We need to add a gap item to fill the place
-                        entries.add(0, ProgramGuideSchedule.createGap(startUtcMillis, firstEntry?.startsAtMillis
-                                ?: endUtcMillis))
+                        entries.add(
+                            0, ProgramGuideSchedule.createGap(
+                                startUtcMillis, firstEntry?.startsAtMillis
+                                    ?: endUtcMillis
+                            )
+                        )
                     } else if (firstEntry.startsAtMillis <= 0) {
                         entries.removeAt(0)
-                        entries.add(0, ProgramGuideSchedule.createGap(startUtcMillis, firstEntry.endsAtMillis))
+                        entries.add(
+                            0,
+                            ProgramGuideSchedule.createGap(startUtcMillis, firstEntry.endsAtMillis)
+                        )
                     }
                     // Entries in the API not always follow each other. There are empty places which have not been accounted for, which offsets our calculations
                     // At this place, we adjust the ending times to be that of the next item. If the difference here is too big, we will insert a gap manually.
@@ -176,7 +199,12 @@ class ProgramGuideManager<T> {
                             if (timeDifference < MAX_UNACCOUNTED_TIME_BEFORE_GAP) {
                                 listIterator.set(current.copy(endsAtMillis = next.startsAtMillis))
                             } else {
-                                listIterator.add(ProgramGuideSchedule.createGap(current.endsAtMillis, next.startsAtMillis))
+                                listIterator.add(
+                                    ProgramGuideSchedule.createGap(
+                                        current.endsAtMillis,
+                                        next.startsAtMillis
+                                    )
+                                )
                             }
                         }
                     }
@@ -185,22 +213,41 @@ class ProgramGuideManager<T> {
                     var millisToAddToNextStart = 0L
                     while (shortIterator.hasNext()) {
                         val current = shortIterator.next()
-                        val currentDuration = current.endsAtMillis - (current.startsAtMillis + millisToAddToNextStart)
+                        val currentDuration =
+                            current.endsAtMillis - (current.startsAtMillis + millisToAddToNextStart)
                         val hasNext = shortIterator.hasNext()
                         if (!hasNext && (millisToAddToNextStart > 0 || currentDuration < ENTRY_MIN_DURATION)) {
-                            Log.i(TAG, "The last schedule (${current.program}) has been extended because it was too short.")
-                            val replacingSchedule = current.copy(startsAtMillis = current.startsAtMillis + millisToAddToNextStart,
-                                    endsAtMillis = max(current.startsAtMillis + ENTRY_MIN_DURATION, current.endsAtMillis))
+                            Log.i(
+                                TAG,
+                                "The last schedule (${current.program}) has been extended because it was too short."
+                            )
+                            val replacingSchedule = current.copy(
+                                startsAtMillis = current.startsAtMillis + millisToAddToNextStart,
+                                endsAtMillis = max(
+                                    current.startsAtMillis + ENTRY_MIN_DURATION,
+                                    current.endsAtMillis
+                                )
+                            )
                             shortIterator.set(replacingSchedule)
                         } else if (currentDuration < ENTRY_MIN_DURATION) {
-                            Log.i(TAG, "The schedule ${current.program} has been extended because it was too short.")
-                            val replacingSchedule = current.copy(startsAtMillis = current.startsAtMillis + millisToAddToNextStart,
-                                    endsAtMillis = current.startsAtMillis + millisToAddToNextStart + ENTRY_MIN_DURATION)
+                            Log.i(
+                                TAG,
+                                "The schedule ${current.program} has been extended because it was too short."
+                            )
+                            val replacingSchedule = current.copy(
+                                startsAtMillis = current.startsAtMillis + millisToAddToNextStart,
+                                endsAtMillis = current.startsAtMillis + millisToAddToNextStart + ENTRY_MIN_DURATION
+                            )
                             shortIterator.set(replacingSchedule)
-                            millisToAddToNextStart = replacingSchedule.endsAtMillis - current.endsAtMillis
+                            millisToAddToNextStart =
+                                replacingSchedule.endsAtMillis - current.endsAtMillis
                         } else if (millisToAddToNextStart > 0) {
-                            Log.i(TAG, "The schedule ${current.program} has been shortened because the previous schedule had to be extended.")
-                            val replacingSchedule = current.copy(startsAtMillis = current.startsAtMillis + millisToAddToNextStart)
+                            Log.i(
+                                TAG,
+                                "The schedule ${current.program} has been shortened because the previous schedule had to be extended."
+                            )
+                            val replacingSchedule =
+                                current.copy(startsAtMillis = current.startsAtMillis + millisToAddToNextStart)
                             shortIterator.set(replacingSchedule)
                             millisToAddToNextStart = 0
                         }
@@ -217,7 +264,7 @@ class ProgramGuideManager<T> {
      * @param timeMillis The time in milliseconds to jump to.
      * @return True if the time was shifted. False if not change was triggered (time was the same as before).
      */
-    internal fun jumpTo(timeMillis: Long) : Boolean {
+    internal fun jumpTo(timeMillis: Long): Boolean {
         val timeShift = timeMillis - fromUtcMillis
         shiftTime(timeShift)
         return timeShift != 0L
@@ -267,7 +314,10 @@ class ProgramGuideManager<T> {
      * entries within the currently managed time range. Returned [ProgramGuideSchedule] can be a dummy one
      * (e.g., whose channelId is INVALID_ID), when it corresponds to a gap between programs.
      */
-    internal fun getScheduleForChannelIdAndIndex(channelId: String, index: Int): ProgramGuideSchedule<T> {
+    internal fun getScheduleForChannelIdAndIndex(
+        channelId: String,
+        index: Int
+    ): ProgramGuideSchedule<T> {
         return channelEntriesMap.getValue(channelId)[index]
     }
 
@@ -340,7 +390,12 @@ class ProgramGuideManager<T> {
     }
 
     @MainThread
-    fun setData(newChannels: List<ProgramGuideChannel>, newChannelEntries: Map<String, List<ProgramGuideSchedule<T>>>, selectedDate: LocalDate, timeZone: ZoneId) {
+    fun setData(
+        newChannels: List<ProgramGuideChannel>,
+        newChannelEntries: Map<String, List<ProgramGuideSchedule<T>>>,
+        selectedDate: LocalDate,
+        timeZone: ZoneId
+    ) {
         channels.clear()
         channelEntriesMap.clear()
 
@@ -358,18 +413,22 @@ class ProgramGuideManager<T> {
      * @param program The program with the new data.
      * @return The resulting program of the replacement. Null if no replacement happened
      */
-    fun updateProgram(program: ProgramGuideSchedule<T>) : ProgramGuideSchedule<T>? {
+    fun updateProgram(program: ProgramGuideSchedule<T>): ProgramGuideSchedule<T>? {
         val channelEntriesMapKeys = channelEntriesMap.keys
         var replacement: ProgramGuideSchedule<T>? = null
         for (key in channelEntriesMapKeys) {
             val list = channelEntriesMap[key]
-            var mutatedList : MutableList<ProgramGuideSchedule<T>>? = null
+            var mutatedList: MutableList<ProgramGuideSchedule<T>>? = null
             if (list != null && replacement == null) {
                 for (possibleMatch in list) {
                     if (possibleMatch.id == program.id && replacement == null) {
                         if (possibleMatch.originalTimes.startsAtMillis != program.originalTimes.startsAtMillis ||
-                                possibleMatch.originalTimes.endsAtMillis != program.originalTimes.endsAtMillis) {
-                            Log.w(TAG, "Different times found when updating program with ID: ${program.id}. Replacement will happen, but times will not be changed.")
+                            possibleMatch.originalTimes.endsAtMillis != program.originalTimes.endsAtMillis
+                        ) {
+                            Log.w(
+                                TAG,
+                                "Different times found when updating program with ID: ${program.id}. Replacement will happen, but times will not be changed."
+                            )
                         }
                         if (mutatedList == null) {
                             mutatedList = list.toMutableList()

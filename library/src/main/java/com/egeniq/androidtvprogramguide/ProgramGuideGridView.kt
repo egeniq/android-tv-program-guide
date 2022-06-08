@@ -33,14 +33,15 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.max
 import kotlin.math.min
 
-class ProgramGuideGridView<T>(context: Context, attrs: AttributeSet?, defStyle: Int) : VerticalGridView(context, attrs, defStyle) {
+class ProgramGuideGridView<T>(context: Context, attrs: AttributeSet?, defStyle: Int) :
+    VerticalGridView(context, attrs, defStyle) {
 
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
     companion object {
         private const val INVALID_INDEX = -1
         private val FOCUS_AREA_SIDE_MARGIN_MILLIS = TimeUnit.MINUTES.toMillis(15)
-        private val TAG : String = ProgramGuideGridView::class.java.name
+        private val TAG: String = ProgramGuideGridView::class.java.name
     }
 
     interface ChildFocusListener {
@@ -101,23 +102,23 @@ class ProgramGuideGridView<T>(context: Context, attrs: AttributeSet?, defStyle: 
 
     @Suppress("UNCHECKED_CAST")
     private val globalFocusChangeListener =
-            ViewTreeObserver.OnGlobalFocusChangeListener { _, newFocus ->
-                if (newFocus !== nextFocusByUpDown) {
-                    // If focus is changed by other buttons than UP/DOWN buttons,
-                    // we clear the focus state.
-                    clearUpDownFocusState(newFocus)
-                }
-                nextFocusByUpDown = null
-                if (ProgramGuideUtil.isDescendant(this@ProgramGuideGridView, newFocus)) {
-                    lastFocusedView = newFocus
-                    if (newFocus is ProgramGuideItemView<*> && (correctScheduleView == null || correctScheduleView == newFocus)) {
-                        scheduleSelectionListener?.onSelectionChanged(newFocus.schedule as ProgramGuideSchedule<T>?)
-                    }
-                    correctScheduleView = null
-                } else {
-                    scheduleSelectionListener?.onSelectionChanged(null)
-                }
+        ViewTreeObserver.OnGlobalFocusChangeListener { _, newFocus ->
+            if (newFocus !== nextFocusByUpDown) {
+                // If focus is changed by other buttons than UP/DOWN buttons,
+                // we clear the focus state.
+                clearUpDownFocusState(newFocus)
             }
+            nextFocusByUpDown = null
+            if (ProgramGuideUtil.isDescendant(this@ProgramGuideGridView, newFocus)) {
+                lastFocusedView = newFocus
+                if (newFocus is ProgramGuideItemView<*> && (correctScheduleView == null || correctScheduleView == newFocus)) {
+                    scheduleSelectionListener?.onSelectionChanged(newFocus.schedule as ProgramGuideSchedule<T>?)
+                }
+                correctScheduleView = null
+            } else {
+                scheduleSelectionListener?.onSelectionChanged(null)
+            }
+        }
 
 
     init {
@@ -209,7 +210,10 @@ class ProgramGuideGridView<T>(context: Context, attrs: AttributeSet?, defStyle: 
         nextFocusByUpDown = null
         // If focus is not a program item, drop focus to the current program when back to the grid
         // Only used if the feature flag is enabled
-        internalKeepCurrentProgramFocused = featureKeepCurrentProgramFocused && (focus !is ProgramGuideItemView<*> || ProgramGuideUtil.isCurrentProgram(focus))
+        internalKeepCurrentProgramFocused =
+            featureKeepCurrentProgramFocused && (focus !is ProgramGuideItemView<*> || ProgramGuideUtil.isCurrentProgram(
+                focus
+            ))
     }
 
     private fun getRightMostFocusablePosition(): Int {
@@ -230,7 +234,8 @@ class ProgramGuideGridView<T>(context: Context, attrs: AttributeSet?, defStyle: 
             Log.w(TAG, "No child view has focus")
             return null
         }
-        val nextChildIndex = if (direction == View.FOCUS_UP) focusedChildIndex - 1 else focusedChildIndex + 1
+        val nextChildIndex =
+            if (direction == View.FOCUS_UP) focusedChildIndex - 1 else focusedChildIndex + 1
         if (nextChildIndex < 0 || nextChildIndex >= childCount) {
             // Wraparound if reached head or end
             if (featureFocusWrapAround) {
@@ -249,10 +254,10 @@ class ProgramGuideGridView<T>(context: Context, attrs: AttributeSet?, defStyle: 
             }
         }
         val nextFocusedProgram = ProgramGuideUtil.findNextFocusedProgram(
-                getChildAt(nextChildIndex),
-                focusRangeLeft,
-                focusRangeRight,
-                internalKeepCurrentProgramFocused
+            getChildAt(nextChildIndex),
+            focusRangeLeft,
+            focusRangeRight,
+            internalKeepCurrentProgramFocused
         )
         if (nextFocusedProgram != null) {
             nextFocusedProgram.getGlobalVisibleRect(tempRect)
@@ -295,7 +300,10 @@ class ProgramGuideGridView<T>(context: Context, attrs: AttributeSet?, defStyle: 
         super.requestChildFocus(child, focused)
     }
 
-    override fun onRequestFocusInDescendants(direction: Int, previouslyFocusedRect: Rect?): Boolean {
+    override fun onRequestFocusInDescendants(
+        direction: Int,
+        previouslyFocusedRect: Rect?
+    ): Boolean {
         if (lastFocusedView?.isShown == true) {
             if (lastFocusedView?.requestFocus() == true) {
                 return true
