@@ -1,5 +1,9 @@
 # Changelog
 
+### 2022-09-08
+
+* Fixed an issue where jump to live would not always select the live program after scrolling.
+
 ### 2022-06-08
 
 * Gradle version and some dependency versions were updated, code reformat.
