@@ -312,6 +312,11 @@ class ProgramGuideGridView<T>(context: Context, attrs: AttributeSet?, defStyle: 
         return super.onRequestFocusInDescendants(direction, previouslyFocusedRect)
     }
 
+    fun focusCurrentProgram() {
+        internalKeepCurrentProgramFocused = true
+        requestFocus()
+    }
+
     fun isKeepCurrentProgramFocused(): Boolean {
         return internalKeepCurrentProgramFocused
     }

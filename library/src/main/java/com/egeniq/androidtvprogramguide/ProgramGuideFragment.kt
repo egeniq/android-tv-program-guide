@@ -846,7 +846,7 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
                     "Scrolling to ${currentProgram.displayTitle}, started at ${currentProgram.startsAtMillis}"
                 )
                 if (!programGuideManager.jumpTo(currentProgram.startsAtMillis)) {
-                    programGuideGrid.requestFocus()
+                    programGuideGrid.focusCurrentProgram()
                 }
             }
         } else {
