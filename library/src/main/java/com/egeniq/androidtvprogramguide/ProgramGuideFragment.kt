@@ -399,6 +399,9 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
         currentDateView?.alpha = 0f
         timeRow.let { timelineRow ->
             val timelineAdapter = ProgramGuideTimeListAdapter(resources, DISPLAY_TIMEZONE)
+            if (timelineStartMillis > 0) {
+                timelineAdapter.update(timelineStartMillis, timelineAdjustmentPixels)
+            }
             timelineRow.adapter = timelineAdapter
             timelineRow.recycledViewPool.setMaxRecycledViews(
                 R.layout.programguide_item_time,
