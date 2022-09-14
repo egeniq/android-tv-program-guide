@@ -81,7 +81,7 @@ class ProgramGuideTimelineRow @JvmOverloads constructor(
 
     // State saving part
 
-    public override fun onSaveInstanceState(): Parcelable? {
+    public override fun onSaveInstanceState(): Parcelable {
         //begin boilerplate code that allows parent classes to save state
         val superState = super.onSaveInstanceState()
         val ss = SavedState(superState)
