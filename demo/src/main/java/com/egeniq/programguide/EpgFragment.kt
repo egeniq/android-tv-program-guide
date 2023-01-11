@@ -54,7 +54,7 @@ class EpgFragment : ProgramGuideFragment<EpgFragment.SimpleProgram>() {
         val innerSchedule = programGuideSchedule.program
         if (innerSchedule == null) {
             // If this happens, then our data source gives partial info
-            Log.w(TAG, "Unable to open schedule: $innerSchedule")
+            Log.w(TAG, "Unable to open schedule!")
             return
         }
         if (programGuideSchedule.isCurrentProgram) {

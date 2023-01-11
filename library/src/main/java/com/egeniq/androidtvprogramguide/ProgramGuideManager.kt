@@ -276,8 +276,8 @@ class ProgramGuideManager<T> {
         var toUtcMillis = toUtcMillis + timeMillisToScroll
         // We tried to scroll before the initial start time
         if (fromUtcMillis < startUtcMillis) {
-            fromUtcMillis = startUtcMillis
             toUtcMillis += startUtcMillis - fromUtcMillis
+            fromUtcMillis = startUtcMillis
         }
         // We tried to scroll over the initial end time
         if (toUtcMillis > endUtcMillis) {
