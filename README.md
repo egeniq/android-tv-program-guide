@@ -47,6 +47,11 @@ Have you found a bug, or does the library not work on your device? Open a ticket
 steps and the manufacturer and model of your device, and we will do our best to help you.
 Pull requests are always welcome.
 
+### Java implementation
+
+This library is written in Kotlin, and you should be able to integrate it in your project without any issues, even if the rest of the project is written in Java.
+But if you are still looking for a Java version, there is a fork of this repository available, with all of the code converted to Java: https://github.com/swinder0161/android-tv-program-guide
+
 ### License
 
 This project is licensed under [the Apache 2.0 license](https://raw.githubusercontent.com/egeniq/android-tv-program-guide/master/LICENSE)
