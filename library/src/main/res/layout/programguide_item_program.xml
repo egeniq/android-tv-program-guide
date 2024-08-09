@@ -41,8 +41,6 @@
         android:layout_height="3dp"
         android:layout_gravity="bottom"
         android:duplicateParentState="true"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
         android:minWidth="0dp"
         android:progressBackgroundTint="@color/programguide_item_progress_background"
         android:progressTint="@color/programguide_item_progress_foreground"
