@@ -39,7 +39,8 @@ import java.util.*
  */
 internal class ProgramGuideRowAdapter(
     private val context: Context,
-    private val programGuideHolder: ProgramGuideHolder<*>
+    private val programGuideHolder: ProgramGuideHolder<*>,
+    private val canFocusChannel: Boolean
 ) :
     RecyclerView.Adapter<ProgramGuideRowAdapter.ProgramRowViewHolder>(),
     ProgramGuideManager.Listener {
@@ -100,7 +101,7 @@ internal class ProgramGuideRowAdapter(
         val itemView = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
         val gridView = itemView.findViewById<ProgramGuideRowGridView>(R.id.row)
         gridView.setRecycledViewPool(recycledViewPool)
-        return ProgramRowViewHolder(itemView)
+        return ProgramRowViewHolder(itemView, canFocusChannel)
     }
 
     override fun onTimeRangeUpdated() {
@@ -111,19 +112,23 @@ internal class ProgramGuideRowAdapter(
         // Do nothing
     }
 
-    internal class ProgramRowViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    internal class ProgramRowViewHolder(itemView: View, canFocusChannel: Boolean) : RecyclerView.ViewHolder(itemView) {
 
         private val container: ViewGroup = itemView as ViewGroup
         private val rowGridView: ProgramGuideRowGridView = container.findViewById(R.id.row)
 
+        private val channelContainer: View = container.findViewById(R.id.programguide_channel_container)
         private val channelNameView: TextView = container.findViewById(R.id.programguide_channel_name)
         private val channelLogoView: ImageView = container.findViewById(R.id.programguide_channel_logo)
 
         init {
             val channelContainer =
                 container.findViewById<ViewGroup>(R.id.programguide_channel_container)
-            channelContainer.viewTreeObserver.addOnGlobalFocusChangeListener { _, _ ->
+            channelContainer.viewTreeObserver.addOnGlobalFocusChangeListener { _, newFocus ->
                 channelContainer.isActivated = rowGridView.hasFocus()
+                channelContainer.isFocusable = canFocusChannel &&
+                        (newFocus.id == R.id.programguide_channel_container ||
+                        rowGridView.hasFocus() && rowGridView.isFirstItem(newFocus))
             }
         }
 
@@ -133,14 +138,14 @@ internal class ProgramGuideRowAdapter(
             programListAdapters: List<RecyclerView.Adapter<*>>,
             programGuideHolder: ProgramGuideHolder<*>
         ) {
-            onBindChannel(programManager.getChannel(position))
+            onBindChannel(programManager.getChannel(position), programGuideHolder)
             rowGridView.swapAdapter(programListAdapters[position], true)
             rowGridView.setProgramGuideFragment(programGuideHolder)
             rowGridView.setChannel(programManager.getChannel(position)!!)
             rowGridView.resetScroll(programGuideHolder.getTimelineRowScrollOffset())
         }
 
-        private fun onBindChannel(channel: ProgramGuideChannel?) {
+        private fun onBindChannel(channel: ProgramGuideChannel?, holder: ProgramGuideHolder<*>) {
             if (channel == null) {
                 channelNameView.visibility = View.GONE
                 channelLogoView.visibility = View.GONE
@@ -158,6 +163,9 @@ internal class ProgramGuideRowAdapter(
             }
             channelNameView.text = channel.name
             channelNameView.visibility = View.VISIBLE
+            channelContainer.setOnClickListener {
+                holder.onChannelClickedInternal(channel)
+            }
         }
 
         internal fun updateLayout() {

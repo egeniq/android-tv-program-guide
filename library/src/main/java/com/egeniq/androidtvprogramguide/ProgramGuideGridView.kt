@@ -23,12 +23,16 @@ import android.util.Log
 import android.util.Range
 import android.view.KeyEvent
 import android.view.View
+import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import androidx.core.view.children
 import androidx.leanback.widget.VerticalGridView
+import com.egeniq.androidtvprogramguide.entity.ProgramGuideChannel
 import com.egeniq.androidtvprogramguide.entity.ProgramGuideSchedule
 import com.egeniq.androidtvprogramguide.util.OnRepeatedKeyInterceptListener
 import com.egeniq.androidtvprogramguide.util.ProgramGuideUtil
 import com.egeniq.androidtvprogramguide.item.ProgramGuideItemView
+import com.egeniq.androidtvprogramguide.row.ProgramGuideRowGridView
 import java.util.concurrent.TimeUnit
 import kotlin.math.max
 import kotlin.math.min
@@ -55,6 +59,8 @@ class ProgramGuideGridView<T>(context: Context, attrs: AttributeSet?, defStyle: 
     interface ScheduleSelectionListener<T> {
         // Can be null if nothing is selected
         fun onSelectionChanged(schedule: ProgramGuideSchedule<T>?)
+        fun onChannelSelected(channel: ProgramGuideChannel)
+        fun onChannelClicked(channel: ProgramGuideChannel)
     }
 
     private lateinit var programGuideManager: ProgramGuideManager<*>
@@ -113,6 +119,16 @@ class ProgramGuideGridView<T>(context: Context, attrs: AttributeSet?, defStyle: 
                 lastFocusedView = newFocus
                 if (newFocus is ProgramGuideItemView<*> && (correctScheduleView == null || correctScheduleView == newFocus)) {
                     scheduleSelectionListener?.onSelectionChanged(newFocus.schedule as ProgramGuideSchedule<T>?)
+                } else if (newFocus.id == R.id.programguide_channel_container) {
+                    // Find the belonging row grid which has the channel
+                    val matchingRow = (newFocus.parent as? ViewGroup)?.children?.firstOrNull { it is ProgramGuideRowGridView } as? ProgramGuideRowGridView
+                    val channel = matchingRow?.channel
+                    if (channel != null) {
+                        scheduleSelectionListener?.onChannelSelected(channel)
+                    } else {
+                        Log.e(TAG, "Unable to determine channel for current selection!")
+                        scheduleSelectionListener?.onSelectionChanged(null)
+                    }
                 }
                 correctScheduleView = null
             } else {

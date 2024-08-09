@@ -32,6 +32,7 @@ class EpgFragment : ProgramGuideFragment<EpgFragment.SimpleProgram>() {
     //
     // override val DISPLAY_CURRENT_TIME_INDICATOR = false
     // override val DISPLAY_SHOW_PROGRESS = false
+    override val CAN_FOCUS_CHANNEL = true
 
     companion object {
         private val TAG = EpgFragment::class.java.name
@@ -85,6 +86,21 @@ class EpgFragment : ProgramGuideFragment<EpgFragment.SimpleProgram>() {
         } else {
             Glide.with(imageView).clear(imageView)
         }
+    }
+
+    override fun onChannelSelected(channel: ProgramGuideChannel) {
+        val titleView = view?.findViewById<TextView>(R.id.programguide_detail_title)
+        titleView?.text = channel.name
+        val metadataView = view?.findViewById<TextView>(R.id.programguide_detail_metadata)
+        metadataView?.text = null
+        val descriptionView = view?.findViewById<TextView>(R.id.programguide_detail_description)
+        descriptionView?.text = null
+        val imageView = view?.findViewById<ImageView>(R.id.programguide_detail_image) ?: return
+        Glide.with(imageView).clear(imageView)
+    }
+
+    override fun onChannelClicked(channel: ProgramGuideChannel) {
+        Toast.makeText(context, "Channel clicked: ${channel.name}", Toast.LENGTH_LONG).show()
     }
 
     override fun isTopMenuVisible(): Boolean {

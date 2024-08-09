@@ -49,7 +49,8 @@ class ProgramGuideRowGridView @JvmOverloads constructor(
     private lateinit var programGuideHolder: ProgramGuideHolder<*>
     private lateinit var programGuideManager: ProgramGuideManager<*>
 
-    private var channel: ProgramGuideChannel? = null
+    var channel: ProgramGuideChannel? = null
+        private set
     private val minimumStickOutWidth =
         resources.getDimensionPixelOffset(R.dimen.programguide_minimum_item_width_sticking_out_behind_channel_column)
 
@@ -318,5 +319,9 @@ class ProgramGuideRowGridView @JvmOverloads constructor(
                 child.updateVisibleArea()
             }
         }
+    }
+
+    fun isFirstItem(newFocus: View?): Boolean {
+        return newFocus != null && layoutManager?.findViewByPosition(0) == newFocus
     }
 }

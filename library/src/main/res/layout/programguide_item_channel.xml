@@ -21,6 +21,7 @@
     android:id="@+id/programguide_channel_container"
     android:layout_width="@dimen/programguide_channel_column_width"
     android:layout_height="@dimen/programguide_program_row_height_with_empty_space"
+    android:focusable="false"
     android:background="@drawable/programguide_channel_item_background"
     android:paddingLeft="@dimen/programguide_page_left_padding">
 

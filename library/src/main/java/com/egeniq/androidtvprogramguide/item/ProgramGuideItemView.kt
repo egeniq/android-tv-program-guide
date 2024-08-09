@@ -58,8 +58,11 @@ class ProgramGuideItemView<T> : FrameLayout {
     }
 
     fun setValues(
-        scheduleItem: ProgramGuideSchedule<T>, fromUtcMillis: Long, toUtcMillis: Long,
-        gapTitle: String, displayProgress: Boolean
+        scheduleItem: ProgramGuideSchedule<T>,
+        fromUtcMillis: Long,
+        toUtcMillis: Long,
+        gapTitle: String,
+        displayProgress: Boolean
     ) {
         schedule = scheduleItem
         val layoutParams = layoutParams

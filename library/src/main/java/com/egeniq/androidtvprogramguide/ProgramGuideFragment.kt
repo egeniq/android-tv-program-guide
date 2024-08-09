@@ -93,6 +93,7 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
     protected open val SELECTABLE_DAYS_IN_PAST = 7
     protected open val SELECTABLE_DAYS_IN_FUTURE = 7
     protected open val USE_HUMAN_DATES = true
+    protected open val CAN_FOCUS_CHANNEL = false
 
     @Suppress("LeakingThis")
     protected open val DATE_WITH_DAY_FORMATTER: DateTimeFormatter =
@@ -103,7 +104,6 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
 
     @LayoutRes
     protected open val OVERRIDE_LAYOUT_ID: Int? = null
-
 
     private var selectionRow = 0
     private var rowHeight = 0
@@ -191,6 +191,25 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
      * The schedule parameter contains all the info you need for taking an action.
      */
     abstract fun onScheduleClicked(programGuideSchedule: ProgramGuideSchedule<T>)
+
+    /**
+     * Called when the user has selected a channel.
+     * The ability to select a channel is disabled by default. You can enable it by
+     * overriding `CAN_FOCUS_CHANNEL` with a true value in your ProgramGuideFragment implementation.
+     */
+    override fun onChannelSelected(channel: ProgramGuideChannel) {
+        // Override in your implementation
+    }
+
+    /**
+     * Called when the user has clicked on a channel.
+     * The ability to select (and click) a channel is disabled by default. You can enable it by
+     * overriding `CAN_FOCUS_CHANNEL` with a true value in your ProgramGuideFragment implementation.
+     */
+    override fun onChannelClicked(channel: ProgramGuideChannel) {
+        // Override in your implementation
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -392,7 +411,7 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
             it.itemAlignmentOffset = 0
             it.itemAlignmentOffsetPercent = BaseGridView.ITEM_ALIGN_OFFSET_PERCENT_DISABLED
 
-            val adapter = ProgramGuideRowAdapter(it.context, this)
+            val adapter = ProgramGuideRowAdapter(it.context, this, CAN_FOCUS_CHANNEL)
             it.adapter = adapter
         }
         programGuideManager.listeners.add(this)
@@ -803,6 +822,14 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
     override fun onScheduleClickedInternal(schedule: ProgramGuideSchedule<T>) {
         ProgramGuideUtil.lastClickedSchedule = schedule
         onScheduleClicked(schedule)
+    }
+
+
+    /**
+     * This method is called from the ProgramRowViewHolder, when the channel view itself was clicked.
+     */
+    override fun onChannelClickedInternal(channel: ProgramGuideChannel) {
+        onChannelClicked(channel)
     }
 
     /**
