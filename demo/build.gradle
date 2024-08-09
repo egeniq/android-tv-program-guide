@@ -2,11 +2,14 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 33
+
+    namespace "com.egeniq.programguide"
+
     defaultConfig {
         applicationId "com.egeniq.programguide"
-        minSdkVersion 21
-        targetSdkVersion 33
+        minSdk 21
+        targetSdk 34
+        compileSdk 34
         versionCode 1
         versionName "1.0"
     }
