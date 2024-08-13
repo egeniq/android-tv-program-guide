@@ -43,6 +43,7 @@ import com.egeniq.androidtvprogramguide.entity.ProgramGuideChannel
 import com.egeniq.androidtvprogramguide.entity.ProgramGuideSchedule
 import com.egeniq.androidtvprogramguide.item.ProgramGuideItemView
 import com.egeniq.androidtvprogramguide.row.ProgramGuideRowAdapter
+import com.egeniq.androidtvprogramguide.row.ProgramGuideRowGridView
 import com.egeniq.androidtvprogramguide.timeline.ProgramGuideTimeListAdapter
 import com.egeniq.androidtvprogramguide.timeline.ProgramGuideTimelineRow
 import com.egeniq.androidtvprogramguide.util.FilterOption
@@ -111,6 +112,7 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
     private var currentTimeIndicatorWidth = 0
     private var timelineAdjustmentPixels = 0
     private var isInitialScroll = true
+    private var isJumpingGridInTime = false
 
     @Suppress("LeakingThis")
     protected var currentlySelectedFilterIndex = SELECTABLE_DAYS_IN_PAST
@@ -428,7 +430,20 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
             )
         }
         val jumpToLive = view.findViewById<View>(R.id.programguide_jump_to_live)!!
-        jumpToLive.setOnClickListener { autoScrollToBestProgramme() }
+        jumpToLive.setOnClickListener {
+            val currentChannelId: String?
+            val gridView = view.findViewById<ProgramGuideGridView<T>>(R.id.programguide_grid)
+            if (gridView != null && gridView.hasFocus()) {
+                val focusedView = gridView.findFocus() as? ProgramGuideItemView<*>
+                val rowView = focusedView?.parent as? ProgramGuideRowGridView
+                val channel = rowView?.channel
+                currentChannelId = channel?.id
+                isJumpingGridInTime = true
+            } else {
+                currentChannelId = null
+            }
+            autoScrollToBestProgramme(specificChannelId = currentChannelId)
+        }
     }
 
     /**
@@ -616,9 +631,10 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
                 timeRow?.scrollTo(scrollOffset, false)
             }
         } else {
-            if (!programGuideGrid.hasFocus()) {
+            if (!programGuideGrid.hasFocus() || isJumpingGridInTime) {
                 // We will temporarily catch the focus, so that the program guide does not focus on all the views while it is scrolling.
                 // This is better for performance, and also avoids a bug where the focused view would be out of scope.
+                isJumpingGridInTime = false
                 focusEnabledScrollListener?.let {
                     timeRow?.removeOnScrollListener(it)
                 }
