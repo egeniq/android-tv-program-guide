@@ -126,7 +126,7 @@ internal class ProgramGuideRowAdapter(
                 container.findViewById<ViewGroup>(R.id.programguide_channel_container)
             channelContainer.viewTreeObserver.addOnGlobalFocusChangeListener { _, newFocus ->
                 channelContainer.isActivated = rowGridView.hasFocus()
-                channelContainer.isFocusable = canFocusChannel &&
+                channelContainer.isFocusable = canFocusChannel && newFocus != null &&
                         (newFocus.id == R.id.programguide_channel_container ||
                         rowGridView.hasFocus() && rowGridView.isFirstItem(newFocus))
             }
