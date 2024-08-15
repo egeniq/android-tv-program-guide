@@ -16,11 +16,13 @@
 
 package com.egeniq.androidtvprogramguide.timeline
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.os.Parcel
 import android.os.Parcelable
 import android.util.AttributeSet
+import android.view.MotionEvent
 import androidx.annotation.RequiresApi
 import kotlin.math.abs
 
@@ -29,14 +31,18 @@ class ProgramGuideTimelineRow @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyle: Int = 0
-) :
-    ProgramGuideTimelineGridView(context, attrs, defStyle) {
+) : ProgramGuideTimelineGridView(context, attrs, defStyle) {
 
     companion object {
         private const val FADING_EDGE_STRENGTH_START = 1.0f
     }
 
     private var scrollPosition: Int = 0
+    private var scrollPositionBeforePointerMove: Int = 0
+    private var wasScrolledByPointer = false
+    private var disableScrollSyncUntilOffset: Int? = null
+
+    var scrollSyncEnabled = false
 
     /** Returns the current scroll position  */
     val currentScrollOffset: Int
@@ -76,6 +82,28 @@ class ProgramGuideTimelineRow @JvmOverloads constructor(
 
     override fun getRightFadingEdgeStrength(): Float {
         return 0f
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(e: MotionEvent?): Boolean {
+        if (!scrollSyncEnabled) {
+            return super.onTouchEvent(e)
+        }
+        if (!wasScrolledByPointer) {
+            scrollPositionBeforePointerMove = scrollPosition
+        }
+        wasScrolledByPointer = true
+        return super.onTouchEvent(e)
+    }
+
+    fun getPointerScrollOffset(): Int {
+        if (!wasScrolledByPointer) {
+            return 0
+        }
+        val result = scrollPositionBeforePointerMove - scrollPosition
+        wasScrolledByPointer = false
+        scrollPositionBeforePointerMove = 0
+        return result
     }
 
 

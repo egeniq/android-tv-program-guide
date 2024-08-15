@@ -45,6 +45,7 @@ import com.egeniq.androidtvprogramguide.item.ProgramGuideItemView
 import com.egeniq.androidtvprogramguide.row.ProgramGuideRowAdapter
 import com.egeniq.androidtvprogramguide.row.ProgramGuideRowGridView
 import com.egeniq.androidtvprogramguide.timeline.ProgramGuideTimeListAdapter
+import com.egeniq.androidtvprogramguide.timeline.ProgramGuideTimelineGridView
 import com.egeniq.androidtvprogramguide.timeline.ProgramGuideTimelineRow
 import com.egeniq.androidtvprogramguide.util.FilterOption
 import com.egeniq.androidtvprogramguide.util.FixedLocalDateTime
@@ -95,6 +96,10 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
     protected open val SELECTABLE_DAYS_IN_FUTURE = 7
     protected open val USE_HUMAN_DATES = true
     protected open val CAN_FOCUS_CHANNEL = false
+    // Synchronizes the scrolls of the RecyclerViews. This is required if you expect pointer events in your application.
+    // Normally this would not be possible on Android TV (although the user could hook up a mouse via USB), and since this
+    // features requires extra listeners and manual scrolling on the views, which reduces performance, this feature is turned off by default.
+    protected open val SCROLL_SYNCING = false
 
     @Suppress("LeakingThis")
     protected open val DATE_WITH_DAY_FORMATTER: DateTimeFormatter =
@@ -135,6 +140,7 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
     private val errorMessage get() = view?.findViewById<TextView>(R.id.programguide_error_message)
 
     private var timelineStartMillis = 0L
+    private var disableScrollSyncUntilOffset: Int? = null
 
     override val programGuideManager = ProgramGuideManager<T>()
 
@@ -379,10 +385,38 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
             (displayWidth - resources.getDimensionPixelSize(R.dimen.programguide_channel_column_width))
         val onScrollListener = object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (SCROLL_SYNCING) {
+                    val timeRow = recyclerView as ProgramGuideTimelineRow
+                    if (disableScrollSyncUntilOffset != null) {
+                        if (timeRow.currentScrollOffset == disableScrollSyncUntilOffset) {
+                            disableScrollSyncUntilOffset = null
+                        } else {
+                            return
+                        }
+                    }
+                }
                 onHorizontalScrolled(dx)
             }
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                if (!SCROLL_SYNCING) {
+                    return
+                }
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    val timeRow = recyclerView as ProgramGuideTimelineRow
+                    val offset = timeRow.getPointerScrollOffset()
+                    if (offset != 0) {
+                        if (!programGuideManager.shiftTime((-offset.toFloat() / widthPerHour * HOUR_IN_MILLIS).toLong())) {
+                            val scrollOffset = (widthPerHour * programGuideManager.getShiftedTime() / HOUR_IN_MILLIS).toInt()
+                            disableScrollSyncUntilOffset = scrollOffset
+                            timeRow.scrollTo(scrollOffset, smoothScroll = true)
+
+                        }
+                    }
+                }
+            }
         }
-        val timeRow = view.findViewById<RecyclerView>(R.id.programguide_time_row)!!
+        val timeRow = view.findViewById<ProgramGuideTimelineRow>(R.id.programguide_time_row)!!
         timeRow.addOnScrollListener(onScrollListener)
         if (!created) {
             viewportMillis = gridWidth * HOUR_IN_MILLIS / widthPerHour
@@ -413,12 +447,18 @@ abstract class ProgramGuideFragment<T> : Fragment(), ProgramGuideManager.Listene
             it.itemAlignmentOffset = 0
             it.itemAlignmentOffsetPercent = BaseGridView.ITEM_ALIGN_OFFSET_PERCENT_DISABLED
 
-            val adapter = ProgramGuideRowAdapter(it.context, this, CAN_FOCUS_CHANNEL)
+            val adapter = ProgramGuideRowAdapter(
+                context = it.context,
+                programGuideHolder = this,
+                timelineRow = if (SCROLL_SYNCING) timeRow else null,
+                canFocusChannel = CAN_FOCUS_CHANNEL
+            )
             it.adapter = adapter
         }
         programGuideManager.listeners.add(this)
         currentDateView?.alpha = 0f
         timeRow.let { timelineRow ->
+            timelineRow.scrollSyncEnabled = SCROLL_SYNCING
             val timelineAdapter = ProgramGuideTimeListAdapter(resources, DISPLAY_TIMEZONE)
             if (timelineStartMillis > 0) {
                 timelineAdapter.update(timelineStartMillis, timelineAdjustmentPixels)

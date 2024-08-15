@@ -33,6 +33,7 @@ class EpgFragment : ProgramGuideFragment<EpgFragment.SimpleProgram>() {
     // override val DISPLAY_CURRENT_TIME_INDICATOR = false
     // override val DISPLAY_SHOW_PROGRESS = false
     override val CAN_FOCUS_CHANNEL = true
+    override val SCROLL_SYNCING = true
 
     companion object {
         private val TAG = EpgFragment::class.java.name

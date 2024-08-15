@@ -16,9 +16,11 @@
 
 package com.egeniq.androidtvprogramguide.row
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Rect
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,6 +31,7 @@ import com.egeniq.androidtvprogramguide.entity.ProgramGuideChannel
 import com.egeniq.androidtvprogramguide.timeline.ProgramGuideTimelineGridView
 import com.egeniq.androidtvprogramguide.util.ProgramGuideUtil
 import com.egeniq.androidtvprogramguide.item.ProgramGuideItemView
+import com.egeniq.androidtvprogramguide.timeline.ProgramGuideTimelineRow
 import java.util.concurrent.TimeUnit
 import kotlin.math.max
 import kotlin.math.min
@@ -48,6 +51,7 @@ class ProgramGuideRowGridView @JvmOverloads constructor(
 
     private lateinit var programGuideHolder: ProgramGuideHolder<*>
     private lateinit var programGuideManager: ProgramGuideManager<*>
+    private var timeRowView: ProgramGuideTimelineGridView? = null
 
     var channel: ProgramGuideChannel? = null
         private set
@@ -67,6 +71,15 @@ class ProgramGuideRowGridView @JvmOverloads constructor(
         if (left <= itemView.right && itemView.left <= right) {
             itemView.updateVisibleArea()
         }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(e: MotionEvent?): Boolean {
+        val timeRow = timeRowView ?: return super.onTouchEvent(e)
+        if (e?.action == MotionEvent.ACTION_UP) {
+            performClick()
+        }
+        return timeRow.dispatchTouchEvent(e)
     }
 
     override fun onScrolled(dx: Int, dy: Int) {
@@ -274,6 +287,10 @@ class ProgramGuideRowGridView @JvmOverloads constructor(
 
     fun setChannel(channelToSet: ProgramGuideChannel) {
         channel = channelToSet
+    }
+
+    fun setTimelineRow(timelineRow: ProgramGuideTimelineRow) {
+        timeRowView = timelineRow
     }
 
     /** Sets the instance of [ProgramGuideHolder]  */

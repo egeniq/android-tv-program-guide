@@ -32,6 +32,7 @@ import com.egeniq.androidtvprogramguide.ProgramGuideManager
 import com.egeniq.androidtvprogramguide.R
 import com.egeniq.androidtvprogramguide.entity.ProgramGuideChannel
 import com.egeniq.androidtvprogramguide.entity.ProgramGuideSchedule
+import com.egeniq.androidtvprogramguide.timeline.ProgramGuideTimelineRow
 import java.util.*
 
 /**
@@ -40,6 +41,7 @@ import java.util.*
 internal class ProgramGuideRowAdapter(
     private val context: Context,
     private val programGuideHolder: ProgramGuideHolder<*>,
+    private val timelineRow: ProgramGuideTimelineRow?,
     private val canFocusChannel: Boolean
 ) :
     RecyclerView.Adapter<ProgramGuideRowAdapter.ProgramRowViewHolder>(),
@@ -93,7 +95,7 @@ internal class ProgramGuideRowAdapter(
     }
 
     override fun onBindViewHolder(holder: ProgramRowViewHolder, position: Int) {
-        holder.onBind(position, programManager, programListAdapters, programGuideHolder)
+        holder.onBind(position, programManager, programListAdapters, programGuideHolder, timelineRow)
     }
 
 
@@ -136,11 +138,15 @@ internal class ProgramGuideRowAdapter(
             position: Int,
             programManager: ProgramGuideManager<*>,
             programListAdapters: List<RecyclerView.Adapter<*>>,
-            programGuideHolder: ProgramGuideHolder<*>
+            programGuideHolder: ProgramGuideHolder<*>,
+            timelineRow: ProgramGuideTimelineRow?
         ) {
             onBindChannel(programManager.getChannel(position), programGuideHolder)
             rowGridView.swapAdapter(programListAdapters[position], true)
             rowGridView.setProgramGuideFragment(programGuideHolder)
+            timelineRow?.let {
+                rowGridView.setTimelineRow(timelineRow)
+            }
             rowGridView.setChannel(programManager.getChannel(position)!!)
             rowGridView.resetScroll(programGuideHolder.getTimelineRowScrollOffset())
         }

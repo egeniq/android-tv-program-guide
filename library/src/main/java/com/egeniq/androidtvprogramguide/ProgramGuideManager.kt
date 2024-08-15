@@ -270,21 +270,29 @@ class ProgramGuideManager<T> {
         return timeShift != 0L
     }
 
-    /** Shifts the time range by the given time. Also makes the guide scroll the views.  */
-    internal fun shiftTime(timeMillisToScroll: Long) {
+    /** Shifts the time range by the given time. Also makes the guide scroll the views.
+     *  Returns true if the time shift was valid, or false if it was invalid, probably due to over or underscrolling.
+     */
+    internal fun shiftTime(timeMillisToScroll: Long): Boolean {
         var fromUtcMillis = fromUtcMillis + timeMillisToScroll
         var toUtcMillis = toUtcMillis + timeMillisToScroll
         // We tried to scroll before the initial start time
+        var didOverOrUnderScroll = false
         if (fromUtcMillis < startUtcMillis) {
-            toUtcMillis += startUtcMillis - fromUtcMillis
+            val difference = toUtcMillis - fromUtcMillis
             fromUtcMillis = startUtcMillis
+            toUtcMillis = startUtcMillis + difference
+            didOverOrUnderScroll = true
         }
         // We tried to scroll over the initial end time
         if (toUtcMillis > endUtcMillis) {
-            fromUtcMillis -= toUtcMillis - endUtcMillis
+            val difference = toUtcMillis - fromUtcMillis
             toUtcMillis = endUtcMillis
+            fromUtcMillis = endUtcMillis - difference
+            didOverOrUnderScroll = true
         }
         setTimeRange(fromUtcMillis, toUtcMillis)
+        return !didOverOrUnderScroll
     }
 
     /** Returned the scrolled(shifted) time in milliseconds.  */
